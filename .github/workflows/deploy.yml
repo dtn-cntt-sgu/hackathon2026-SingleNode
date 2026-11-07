@@ -1,13 +1,12 @@
 name: Auto Deploy UrbanShield to Google Cloud Run
 
 on:
-  workflow_dispatch: # Cho phép kích hoạt thủ công khi đã cấu hình GCP_SA_KEY
+  workflow_dispatch: # Cho phép kích hoạt thủ công khi cần deploy từ GitHub Actions
 
 jobs:
   deploy:
     name: Build & Deploy to Cloud Run
     runs-on: ubuntu-latest
-    if: "${{ secrets.GCP_SA_KEY != '' }}"
 
     steps:
       - name: 1. Checkout repository code
