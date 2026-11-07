@@ -403,9 +403,9 @@ class UrbanShieldDetector:
 
         # Robust Dry Road Classification vs Flood Water Surface:
         # On 640x360 downscaled frames, a dry daylight road exhibits sharp asphalt texture and high-frequency edges
-        # (lap_var > 3800.0), normal daylight luminance (val_mean > 80.0), and low saturation (sat_mean < 75.0).
-        # Water surfaces diffuse textures and have lap_var <= 3200.0.
-        is_dry_road = (lap_var > 3800.0 and val_mean > 80.0 and sat_mean < 75.0)
+        # (lap_var > 650.0), normal daylight luminance (val_mean > 70.0), and low saturation (sat_mean < 75.0).
+        # Muddy water surfaces diffuse textures and have low lap_var (<= 450.0).
+        is_dry_road = (lap_var > 650.0 and val_mean > 70.0 and sat_mean < 75.0)
         is_water_surface = (not is_dry_road) and (val_mean > 15.0)
 
         # Filter upright motorcycles/bicycles in the measurable road corridor (width >= 20, height >= 26)
