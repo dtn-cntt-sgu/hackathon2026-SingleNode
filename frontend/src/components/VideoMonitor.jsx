@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, AlertTriangle, CheckCircle2, ShieldAlert, Clock, AlertOctagon, Info } from 'lucide-react';
+import { Cpu, Droplets, AlertOctagon, Clock, CheckCircle2, Waves } from 'lucide-react';
 
 export default function VideoMonitor({
   activeNode,
@@ -14,7 +14,7 @@ export default function VideoMonitor({
   const depthValue = (hasRefObject && metrics?.flood?.detected) ? metrics.flood.depth_cm : 0;
   const lastRefDepth = metrics?.flood?.last_ref_depth_cm || 0;
   const depthPercent = Math.min(100, Math.max(0, (depthValue / 50) * 100));
-  
+
   // Accident / Fall telemetry
   const isAccident = Boolean(metrics?.accident?.detected);
   const motionlessSec = Number(metrics?.accident?.motionless_sec || 0);
@@ -23,10 +23,20 @@ export default function VideoMonitor({
 
   // Determine dynamic gradient color for the flood gauge fill
   let gaugeGradient = 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'; // Green (Safe <10cm)
+  let floodLevelClass = 'safe';
+  let floodLevelText = '✅ Mặt đường thông thoáng';
+
   if (depthValue >= 20.0) {
     gaugeGradient = 'linear-gradient(90deg, #10b981 0%, #f59e0b 35%, #ef4444 80%)'; // Red (Danger >=20cm)
+    floodLevelClass = 'danger';
+    floodLevelText = '⚠️ Ngập sâu (Vượt nửa bánh xe)';
   } else if (depthValue >= 10.0) {
     gaugeGradient = 'linear-gradient(90deg, #10b981 0%, #f59e0b 100%)'; // Amber (Warning 10-20cm)
+    floodLevelClass = 'warning';
+    floodLevelText = '⚡ Ngập chú ý (Mấp mé ống xả)';
+  } else if (!hasRefObject && metrics?.flood?.water_surface_present) {
+    floodLevelClass = 'waiting';
+    floodLevelText = `💧 Có nước ngập (Chờ xe máy làm mốc${lastRefDepth > 0 ? ` - Lần đo trước: ${lastRefDepth}cm` : ''})`;
   }
 
   return (
@@ -57,98 +67,40 @@ export default function VideoMonitor({
         </div>
       </div>
 
-      {/* 2. Automated AI Fall & Road Accident Monitor Card */}
-      <div className={`fall-monitor-card ${isAccident ? 'accident-danger' : isCandidateFalling ? 'accident-tracking' : 'accident-safe'}`}>
-        <div className="fall-monitor-header">
-          <div className="fall-title-group">
-            {isAccident ? (
-              <AlertOctagon size={16} className="fall-icon text-danger pulse-icon" />
-            ) : isCandidateFalling ? (
-              <Clock size={16} className="fall-icon text-warning spin-slow" />
-            ) : (
-              <CheckCircle2 size={16} className="fall-icon text-safe" />
-            )}
-            <span className="fall-title">GIÁM SÁT NGÃ XE TỰ ĐỘNG</span>
-          </div>
-
-          <span className={`fall-status-pill ${isAccident ? 'danger' : isCandidateFalling ? 'warning' : 'safe'}`}>
-            {isAccident
-              ? '🚨 PHÁT HIỆN SỰ CỐ NGÃ XE'
-              : isCandidateFalling
-              ? `⏱️ ĐANG THEO DÕI BẤT ĐỘNG: ${motionlessSec.toFixed(1)}s / 5.0s`
-              : '🟢 AN TOÀN (LƯU THÔNG BÌNH THƯỜNG)'}
-          </span>
-        </div>
-
-        {/* Fall Countdown Progress Bar (Active when fall candidate is detected) */}
-        {isCandidateFalling && (
-          <div className="fall-countdown-track">
-            <div
-              className="fall-countdown-fill"
-              style={{ width: `${fallProgress}%` }}
-            />
-          </div>
-        )}
-
-        <div className="fall-monitor-desc">
-          {isAccident ? (
-            <div className="fall-desc-content danger">
-              <strong>Sự cố:</strong> Người ngã nằm bất động <strong>{motionlessSec > 0 ? motionlessSec.toFixed(1) : '5.0'} giây</strong> (vượt ngưỡng 5 giây). Hệ thống đã tự động gửi tin nhắn cảnh báo tới Telegram Dân quân / Khu phố.
+      {/* 2. Side-by-Side Dual Status Cards (50% - 50%) */}
+      <div className="dual-monitor-grid">
+        {/* Card 1: Giám sát ngập nước qua bánh xe máy 50cm */}
+        <div className={`dual-status-card flood-card ${floodLevelClass}`}>
+          <div className="dual-card-header">
+            <div className="dual-card-title-group">
+              <Droplets size={15} className={`dual-card-icon ${floodLevelClass}`} />
+              <span className="dual-card-title">1. MỰC NƯỚC NGẬP</span>
             </div>
-          ) : isCandidateFalling ? (
-            <div className="fall-desc-content warning">
-              <strong>Bộ lọc chống báo giả:</strong> AI đang theo dõi liên tục 5 giây. Nếu người dân tự đứng dậy hoặc cúi nhặt đồ trước 5 giây, AI sẽ tự động hủy cảnh báo.
-            </div>
-          ) : (
-            <div className="fall-desc-content safe">
-              Không phát hiện tư thế ngã nằm đường. Người và phương tiện lưu thông bình thường qua khu vực ngõ hẻm.
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 3. Geometric 50cm Wheel Flood Depth Gauge */}
-      <div className="telemetry-gauge-card">
-        <div className="gauge-calibrator">
-          <div className="gauge-header">
-            <div className="gauge-label-group">
-              <span className="gauge-title">ĐO NGẬP HÌNH HỌC (BÁNH XE MÁY 50CM)</span>
-              <span className={`gauge-status-text ${(hasRefObject && metrics?.flood?.level === 'DANGER') ? 'text-danger' : 'text-warning'}`}>
-                {(hasRefObject && metrics?.flood?.detected) ? (
-                  <>
-                    {metrics.flood.level === 'DANGER'
-                      ? '⚠️ Ngập nguy hiểm (Vượt nửa bánh xe)'
-                      : '⚡ Ngập mức chú ý (Mấp mé ống xả)'}
-                  </>
-                ) : !hasRefObject && metrics?.flood?.water_surface_present ? (
-                  <>💧 Có nước ngập — Chờ xe máy đi qua để đo{lastRefDepth > 0 ? ` (Lần đo trước: ${lastRefDepth}cm)` : ''}</>
-                ) : (
-                  <>✅ Mặt đường thông thoáng, không ngập nước</>
-                )}
-              </span>
-            </div>
-
-            <div className="gauge-val-box">
+            <div className="dual-card-badge-wrap">
               {hasRefObject ? (
-                <div className="gauge-val-number">
-                  <span className="val-large">{depthValue.toFixed(1)}</span>
+                <div className="dual-val-badge">
+                  <span className="val-number">{depthValue.toFixed(1)}</span>
                   <span className="val-unit">cm / 50cm</span>
                 </div>
               ) : metrics?.flood?.water_surface_present ? (
-                <span className="gauge-val-waiting">Chờ xe máy làm mốc</span>
+                <span className="dual-val-text waiting">Chờ xe máy mốc</span>
               ) : (
-                <span className="gauge-val-dry">Đường khô ráo</span>
+                <span className="dual-val-text dry">0 cm (Khô ráo)</span>
               )}
             </div>
           </div>
 
-          {/* Progress Bar with 3 Visual Danger Zones */}
-          <div className="gauge-track">
+          <div className="dual-card-status-line">
+            <span className={`status-label ${floodLevelClass}`}>{floodLevelText}</span>
+          </div>
+
+          {/* Calibrated 50cm Gauge Track */}
+          <div className="gauge-track mini-track">
             <div className="track-marker safe-mark" style={{ left: '20%' }}>
-              <span className="mark-label">10cm (Ống xả)</span>
+              <span className="mark-label">10cm</span>
             </div>
             <div className="track-marker danger-mark" style={{ left: '50%' }}>
-              <span className="mark-label">25cm (Nửa bánh)</span>
+              <span className="mark-label">25cm</span>
             </div>
             <div className="track-marker full-mark" style={{ left: '100%' }}>
               <span className="mark-label">50cm</span>
@@ -159,9 +111,74 @@ export default function VideoMonitor({
               style={{
                 width: `${depthPercent}%`,
                 background: gaugeGradient,
-                boxShadow: depthValue >= 20 ? '0 0 10px rgba(239, 68, 68, 0.5)' : 'none'
+                boxShadow: depthValue >= 20 ? '0 0 8px rgba(239, 68, 68, 0.45)' : 'none'
               }}
             />
+          </div>
+        </div>
+
+        {/* Card 2: Giám sát sự cố ngã xe tự động (Bộ đếm 5s) */}
+        <div className={`dual-status-card fall-card ${isAccident ? 'accident-danger' : isCandidateFalling ? 'accident-tracking' : 'accident-safe'}`}>
+          <div className="dual-card-header">
+            <div className="dual-card-title-group">
+              {isAccident ? (
+                <AlertOctagon size={15} className="dual-card-icon danger pulse-icon" />
+              ) : isCandidateFalling ? (
+                <Clock size={15} className="dual-card-icon warning spin-slow" />
+              ) : (
+                <CheckCircle2 size={15} className="dual-card-icon safe" />
+              )}
+              <span className="dual-card-title">2. SỰ CỐ NGÃ XE</span>
+            </div>
+
+            <div className="dual-card-badge-wrap">
+              <span className={`dual-status-pill ${isAccident ? 'danger' : isCandidateFalling ? 'warning' : 'safe'}`}>
+                {isAccident
+                  ? '🚨 SỰ CỐ NGÃ XE'
+                  : isCandidateFalling
+                  ? `${motionlessSec.toFixed(1)}s / 5.0s`
+                  : '🟢 AN TOÀN'}
+              </span>
+            </div>
+          </div>
+
+          {/* Fall Progress Bar (Active when candidate detected) */}
+          <div className="dual-card-status-line">
+            {isAccident ? (
+              <span className="status-label danger">
+                Ngã bất động <strong>{motionlessSec > 0 ? motionlessSec.toFixed(1) : '5.0'}s</strong> — Đã báo Telegram
+              </span>
+            ) : isCandidateFalling ? (
+              <span className="status-label warning">
+                Đang theo dõi: Tự động hủy nếu người dân đứng dậy &lt; 5s
+              </span>
+            ) : (
+              <span className="status-label safe">
+                Không phát hiện người ngã — Lưu thông bình thường
+              </span>
+            )}
+          </div>
+
+          <div className="gauge-track mini-track fall-track">
+            {isAccident ? (
+              <div
+                className="gauge-fill danger"
+                style={{ width: '100%', background: 'linear-gradient(90deg, #f59e0b, #ef4444)' }}
+              />
+            ) : isCandidateFalling ? (
+              <div
+                className="gauge-fill warning"
+                style={{
+                  width: `${fallProgress}%`,
+                  background: 'linear-gradient(90deg, #3b82f6, #f59e0b)'
+                }}
+              />
+            ) : (
+              <div
+                className="gauge-fill safe"
+                style={{ width: '100%', background: '#dcfce7' }}
+              />
+            )}
           </div>
         </div>
       </div>

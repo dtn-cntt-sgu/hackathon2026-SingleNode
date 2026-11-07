@@ -519,34 +519,67 @@
   height: 100%;
 }
 
-/* Automated AI Fall Monitor Card */
-.fall-monitor-card {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--slate-200);
+/* Side-by-Side Dual Status Grid (50% - 50%) */
+.dual-monitor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+@media (max-width: 680px) {
+  .dual-monitor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dual-status-card {
   background: #ffffff;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   transition: all 0.25s ease;
-  flex-shrink: 0;
+  min-height: 82px;
 }
 
-.fall-monitor-card.accident-safe {
-  background: #f0fdf4;
+/* Card 1: Flood State Colors */
+.dual-status-card.flood-card.safe {
   border-color: #bbf7d0;
+  background: #f0fdf4;
 }
-
-.fall-monitor-card.accident-tracking {
-  background: #fffbeb;
+.dual-status-card.flood-card.warning {
   border-color: #fde68a;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+  background: #fffbeb;
+}
+.dual-status-card.flood-card.danger {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+.dual-status-card.flood-card.waiting {
+  border-color: #cbd5e1;
+  background: #f8fafc;
 }
 
-.fall-monitor-card.accident-danger {
-  background: #fef2f2;
+/* Card 2: Fall State Colors */
+.dual-status-card.fall-card.accident-safe {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+.dual-status-card.fall-card.accident-tracking {
+  border-color: #fde68a;
+  background: #fffbeb;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+.dual-status-card.fall-card.accident-danger {
   border-color: #fca5a5;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
+  background: #fef2f2;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.3);
   animation: pulseCard 1.4s infinite alternate;
 }
 
@@ -555,36 +588,31 @@
   100% { border-color: #dc2626; box-shadow: 0 0 18px rgba(220, 38, 38, 0.4); }
 }
 
-.fall-monitor-header {
+.dual-card-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 8px;
-}
-
-.fall-title-group {
-  display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.fall-title {
-  font-size: 0.72rem;
+.dual-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dual-card-title {
+  font-size: 0.70rem;
   font-weight: 800;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
   color: #1e293b;
 }
 
-.fall-icon.text-safe {
-  color: #16a34a;
-}
-.fall-icon.text-warning {
-  color: #d97706;
-}
-.fall-icon.text-danger {
-  color: #dc2626;
-}
+.dual-card-icon.safe { color: #16a34a; }
+.dual-card-icon.warning { color: #d97706; }
+.dual-card-icon.danger { color: #dc2626; }
+.dual-card-icon.waiting { color: #0284c7; }
 
 .pulse-icon {
   animation: pulseGlow 1s infinite;
@@ -598,142 +626,95 @@
   100% { transform: rotate(360deg); }
 }
 
-.fall-status-pill {
-  font-size: 0.72rem;
+.dual-card-badge-wrap {
+  flex-shrink: 0;
+}
+
+.dual-val-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.dual-val-badge .val-number {
+  font-size: 1.05rem;
   font-weight: 800;
   font-family: var(--font-mono);
-  padding: 3px 8px;
+  color: #0284c7;
+  line-height: 1;
+}
+
+.dual-val-badge .val-unit {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  font-family: var(--font-mono);
+}
+
+.dual-val-text {
+  font-size: 0.70rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.dual-val-text.waiting {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.dual-val-text.dry {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.dual-status-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
   border-radius: 12px;
   letter-spacing: -0.2px;
 }
-
-.fall-status-pill.safe {
+.dual-status-pill.safe {
   background: #dcfce7;
   color: #15803d;
   border: 1px solid #86efac;
 }
-
-.fall-status-pill.warning {
+.dual-status-pill.warning {
   background: #fef3c7;
   color: #b45309;
   border: 1px solid #fcd34d;
 }
-
-.fall-status-pill.danger {
+.dual-status-pill.danger {
   background: #fee2e2;
   color: #b91c1c;
   border: 1px solid #fca5a5;
 }
 
-.fall-countdown-track {
-  width: 100%;
-  height: 6px;
-  background: #fde68a;
-  border-radius: 4px;
+.dual-card-status-line {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.fall-countdown-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #f59e0b, #ef4444);
-  border-radius: 4px;
-  transition: width 0.4s linear;
+.status-label.safe { color: #15803d; font-weight: 600; }
+.status-label.warning { color: #b45309; font-weight: 700; }
+.status-label.danger { color: #b91c1c; font-weight: 700; }
+.status-label.waiting { color: #0369a1; font-weight: 600; }
+
+.mini-track {
+  height: 8px;
+  margin-top: 1px;
+}
+.mini-track .mark-label {
+  font-size: 0.58rem;
+  bottom: -13px;
 }
 
-.fall-monitor-desc {
-  font-size: 0.74rem;
-  line-height: 1.4;
-  color: #475569;
-}
-
-.fall-desc-content.danger {
-  color: #991b1b;
-  font-weight: 600;
-}
-
-.fall-desc-content.warning {
-  color: #92400e;
-  font-weight: 600;
-}
-
-.fall-desc-content.safe {
-  color: #166534;
-}
-
-/* Depth Gauge Card */
-.telemetry-gauge-card {
-  padding: 8px 12px 10px;
-  background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid var(--slate-200);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.gauge-calibrator {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.gauge-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.gauge-label-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.gauge-title {
-  font-size: 0.70rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: #334155;
-}
-
-.gauge-status-text {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.gauge-val-box {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.gauge-val-number {
-  display: flex;
-  align-items: baseline;
-  gap: 3px;
-}
-
-.gauge-val-number .val-large {
-  font-size: 1.15rem;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: #0284c7;
-}
-
-.gauge-val-number .val-unit {
-  font-size: 0.70rem;
-  font-weight: 700;
-  color: #64748b;
-  font-family: var(--font-mono);
-}
-
-.gauge-val-waiting, .gauge-val-dry {
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: #64748b;
+.fall-track {
+  background: #e2e8f0;
 }
 
 .gauge-status-text {
