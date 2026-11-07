@@ -97,7 +97,12 @@
 
 > **Ban Giám khảo hỏi:** *"Đo ngập nước và phát hiện tai nạn giao thông trên thị trường và các đề tài nghiên cứu đã có rất nhiều người làm rồi. Vậy giải pháp của đội em có điểm gì thực sự mới và đột phá so với những cái đang có?"*
 
-* **Cách trả lời (Đánh trực diện rào cản hạ tầng dân sinh & 3 đột phá thực chiến):**
+* **⚡ BẢN TRẢ LỜI NHANH (GỌN - ĐẬP THẲNG VÀO TRỌNG TÂM):**
+  > 1. **Lấy bánh xe máy 50cm làm thước đo hình học:** Không tốn tiền mua cảm biến hay thước đo; dùng xe máy chạy qua để đo mực nước ngập theo centimet.
+  > 2. **Chạy trên CPU cũ & Xóa sạch video trên RAM:** Tối ưu YOLOv8n trên CPU máy tính văn phòng; phân tích xong hủy khung hình ngay trên RAM, không lưu ổ cứng, bảo vệ 100% đời tư ngõ hẻm.
+  > 3. **Gói tin cảnh báo 80 Bytes:** Không truyền video gây nghẽn mạng; chỉ khi ngập sâu hoặc ngã xe nằm bất động > 5s mới bắn 1 mẩu tin văn bản 80 Bytes qua Telegram.
+
+* **Cách trả lời chi tiết (Đánh trực diện rào cản hạ tầng dân sinh & 3 đột phá thực chiến):**
   > "Dạ, câu hỏi của Thầy Cô đánh rất đúng vào thực tế triển khai ạ.
   >
   > Hiện nay khi giải quyết bài toán ngập và tai nạn ngõ hẻm, người ta thường đi theo 2 hướng chính:
@@ -116,7 +121,14 @@
 
 > **Ban Giám khảo hỏi:** *"Hệ thống của em chịu tải được bao nhiêu người dùng cùng lúc (concurrent users)? Lỡ mùa mưa bão cả vạn người dân cùng vào xem bản đồ ngập lụt thì server có bị sập không? Đưa ra bằng chứng kỹ thuật cụ thể?"*
 
-* **Cách trả lời (Phân tách kiến trúc 2 tầng + Công thức Throughput thực tế):**
+* **⚡ BẢN TRẢ LỜI NHANH (SỐ LIỆU TECH & THROUGHPUT):**
+  > 1. **Tách 2 tầng độc lập:** AI xử lý riêng ở hẻm (CPU 28.5 FPS) không chịu tải người dùng. Tầng WebGIS / API chạy độc lập trên Cloud.
+  > 2. **Latency 2ms trên RAM Cache:** Dữ liệu trạm lưu trên RAM Cache (`X-Process-Time: 0.8ms - 2.5ms`), chạy trên nhân bất đồng bộ FastAPI / Uvicorn `uvloop`.
+  > 3. **Throughput:** $1\text{ vCPU} \approx 500\text{ req/s} \rightarrow \mathbf{2.500\text{ user đồng thời / 1 node}}$.
+  > 4. **Auto-scaling:** Cloud Run tự scale 1-10 instances phục vụ $\mathbf{25.000+\text{ user}}$ giờ cao điểm bão.
+  > 5. **Tải Broadcast = 0%:** Bắn cảnh báo ngập qua Telegram Bot API để CDN Telegram gánh tải phân phối, tải tác động lên server bằng 0%.
+
+* **Cách trả lời chi tiết (Phân tách kiến trúc 2 tầng + Công thức Throughput thực tế):**
   > "Dạ, để trả lời chính xác câu hỏi về năng lực chịu tải, em xin phép phân tách kiến trúc hệ thống thành 2 tầng độc lập:
   >
   > **1. Tầng Edge AI (Máy tính tại ngõ hẻm):**
