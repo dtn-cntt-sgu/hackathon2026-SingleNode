@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt ./backend/
-RUN pip install --no-cache-dir -r ./backend/requirements.txt
+# Install lightweight CPU-only PyTorch first to reduce container size and accelerate build
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r ./backend/requirements.txt
 
 # Copy backend application code
 COPY backend/ ./backend/
