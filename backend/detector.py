@@ -565,9 +565,21 @@ class UrbanShieldDetector:
         active_fallen_person = None
 
         # Filter strictly for genuine horizontal / fallen candidates (W/H > 1.0 or W/H > 0.90 near vehicle)
-        # Normal standing or riding people (W/H < 0.85) are NEVER candidates.
+        # Normal standing or riding people (W/H < 0.85, or seated on upright motorcycles) are NEVER candidates.
         for p in persons:
             if p["height"] >= 20 and p["width"] >= 20 and p["confidence"] >= 0.15 and p["center"][1] >= 0.35 * h:
+                # Discard riders sitting upright on normal motorcycles (waiting at red lights or in traffic)
+                is_seated_rider = False
+                for m in motorcycles:
+                    mx1, my1, mx2, my2 = m["box"]
+                    px1, py1, px2, py2 = p["box"]
+                    # If person overlaps with upright motorcycle and head extends above it
+                    if (px1 < mx2 and px2 > mx1) and (py1 <= my1 + 15) and (m["aspect_ratio"] < 1.45):
+                        is_seated_rider = True
+                        break
+                if is_seated_rider:
+                    continue
+
                 # In flooded street conditions, filter out faint horizontal water ripples / reflections
                 if is_water_surface and len(vehicle_centers) > 0:
                     min_v_dist = min([float(np.hypot(p["center"][0] - vx, p["center"][1] - vy)) for vx, vy in vehicle_centers])
@@ -581,13 +593,21 @@ class UrbanShieldDetector:
                     break
 
         # Detect overturned / flat fallen motorcycle on active roadway
-        # Upright or parked motorcycles (AR < 1.60) are NEVER fall candidates!
-        # A genuinely flat skidded motorcycle on asphalt has AR >= 1.65, low height (<= 75px), and lies in roadway corridor.
+        # An overturned / fallen motorcycle has NO upright rider sitting on it!
+        # Normal motorcycles waiting at intersections (with riders sitting on them) are NEVER fall candidates.
         if active_fallen_person is None:
             for m in motorcycles:
+                has_seated_rider = False
+                for p in persons:
+                    px1, py1, px2, py2 = p["box"]
+                    mx1, my1, mx2, my2 = m["box"]
+                    if (px1 < mx2 and px2 > mx1) and (py1 <= my1 + 15):
+                        has_seated_rider = True
+                        break
                 if (
-                    m["aspect_ratio"] >= 1.65
-                    and m["height"] <= 75
+                    not has_seated_rider
+                    and m["aspect_ratio"] >= 1.70
+                    and m["height"] <= 70
                     and m["center"][1] >= 0.40 * h
                     and (0.15 * w <= m["center"][0] <= 0.85 * w)
                 ):
