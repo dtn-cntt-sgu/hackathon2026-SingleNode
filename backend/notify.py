@@ -51,8 +51,8 @@ def send_telegram_alert(
     2. Sends interactive Map Pin (sendLocation) directly in the chat for instant visual inspection.
     """
     start_ts = time.time()
-    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip() or "9000579387:AAET2Fbjy1d2zUh9fHL6MGN7YKK4syqz5WI"
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or "-5108096407"
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
     # Auto-extract coordinates if not explicitly passed
     if lat is None or lng is None:

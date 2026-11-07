@@ -38,6 +38,9 @@ detector = UrbanShieldDetector()
 # Edge API Key authentication
 EDGE_API_KEY = os.environ.get("EDGE_API_KEY", "urbanshield-sgu-2026-key")
 
+# Global state lock for thread-safe state mutations across video streams
+state_lock = threading.Lock()
+
 # In-memory storage for nodes (5 Real-world camera locations in District 7, HCMC)
 NODES: Dict[str, Dict[str, Any]] = {
     "node-sgu-01": {
@@ -350,12 +353,14 @@ def stream_generator(node_id: str, custom_fps: Optional[float] = None):
             time.sleep(0.04)
             continue
 
-        fut = AI_FUTURES.get(node_id)
+        with state_lock:
+            fut = AI_FUTURES.get(node_id)
         if fut is not None and fut.done():
             try:
                 res = fut.result()
                 if res:
-                    NODE_ANALYSIS_CACHE[node_id] = res
+                    with state_lock:
+                        NODE_ANALYSIS_CACHE[node_id] = res
                     flood_info = res.get("flood", {"detected": False, "depth_cm": 0.0, "level": "SAFE"})
                     acc_info = res.get("accident", {"detected": False, "reason": "", "motionless_sec": 0.0})
 
@@ -364,19 +369,20 @@ def stream_generator(node_id: str, custom_fps: Optional[float] = None):
                     ev_unit = "s" if acc_info.get("detected") else "cm"
                     p_json, p_bytes = build_compact_payload(node_id, ev_type, ev_val, ev_unit)
 
-                    NODE_LATEST_METRICS[node_id] = {
-                        "fps": round(target_fps, 1),
-                        "infer_time_ms": res.get("infer_time_ms", 32.0),
-                        "clahe_active": res.get("clahe_active", False),
-                        "detections_count": res.get("detections_count", 0),
-                        "vehicles_count": res.get("vehicles_count", 0),
-                        "payload_bytes": p_bytes,
-                        "payload_json": p_json,
-                        "privacy": res.get("privacy", {"ram_only": True, "frames_processed_in_ram": detector.frames_processed_in_ram, "disk_writes": 0}),
-                        "accident": acc_info,
-                        "flood": flood_info,
-                        "updated_at": time.time()
-                    }
+                    with state_lock:
+                        NODE_LATEST_METRICS[node_id] = {
+                            "fps": round(target_fps, 1),
+                            "infer_time_ms": res.get("infer_time_ms", 32.0),
+                            "clahe_active": res.get("clahe_active", False),
+                            "detections_count": res.get("detections_count", 0),
+                            "vehicles_count": res.get("vehicles_count", 0),
+                            "payload_bytes": p_bytes,
+                            "payload_json": p_json,
+                            "privacy": res.get("privacy", {"ram_only": True, "frames_processed_in_ram": detector.frames_processed_in_ram, "disk_writes": 0}),
+                            "accident": acc_info,
+                            "flood": flood_info,
+                            "updated_at": time.time()
+                        }
 
                     depth_val = float(flood_info.get("depth_cm", 0.0))
                     mot_val = float(acc_info.get("motionless_sec", 0.0))
@@ -437,7 +443,8 @@ def stream_generator(node_id: str, custom_fps: Optional[float] = None):
                             new_auto_inc["telegram_sent"] = True
                             new_auto_inc["synced"] = True
 
-                            INCIDENTS[:] = [new_auto_inc] + [inc for inc in INCIDENTS if inc.get("node_id") != node_id or inc.get("type") != inc_type][:5]
+                            with state_lock:
+                                INCIDENTS[:] = [new_auto_inc] + [inc for inc in INCIDENTS if inc.get("node_id") != node_id or inc.get("type") != inc_type][:5]
 
                             try:
                                 save_incident_to_db(new_auto_inc)
@@ -458,10 +465,12 @@ def stream_generator(node_id: str, custom_fps: Optional[float] = None):
                             ).start()
             except Exception as loop_err:
                 print(f"[STREAM PROCESSING ERROR] {loop_err}")
-            AI_FUTURES[node_id] = None
+            with state_lock:
+                AI_FUTURES[node_id] = None
 
-        if AI_FUTURES.get(node_id) is None:
-            AI_FUTURES[node_id] = AI_POOL.submit(detector.infer, frame.copy(), node_id)
+        with state_lock:
+            if AI_FUTURES.get(node_id) is None:
+                AI_FUTURES[node_id] = AI_POOL.submit(detector.infer, frame.copy(), node_id)
 
         analysis = NODE_ANALYSIS_CACHE.get(node_id, detector.get_default_analysis())
         annotated = detector.render_hud(frame, analysis, stream_fps=target_fps)

@@ -3,6 +3,7 @@ UrbanShield Lite - Incident Events & Dispatch Router
 Endpoints for flood events, accident events, and Telegram alerts.
 """
 
+import os
 import time
 from typing import Optional
 from fastapi import APIRouter, Header, HTTPException, Query
@@ -19,6 +20,15 @@ from notify import send_telegram_alert
 import state
 
 router = APIRouter(tags=["Incidents"])
+
+REQUIRE_EDGE_API_KEY = os.environ.get("REQUIRE_EDGE_API_KEY", "false").lower() == "true"
+
+
+def _validate_edge_key(x_edge_key: Optional[str]):
+    if REQUIRE_EDGE_API_KEY and not x_edge_key:
+        raise HTTPException(status_code=401, detail="Missing X-Edge-Key header")
+    if x_edge_key and x_edge_key != state.EDGE_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid X-Edge-Key")
 
 
 @router.get("/api/incidents")
@@ -50,8 +60,7 @@ def post_flood_incident(
     """
     Minimal API endpoint for Flood Events (< 150 bytes payload).
     """
-    if x_edge_key and x_edge_key != state.EDGE_API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid X-Edge-Key")
+    _validate_edge_key(x_edge_key)
 
     _, computed_level = estimate_wheel_flood_depth(50.0 - min(50.0, payload.depth_cm), 50.0, 50.0)
     level = payload.level or computed_level
@@ -85,9 +94,10 @@ def post_flood_incident(
     }
     save_incident_to_db(new_inc)
 
-    state.INCIDENTS = [inc for inc in state.INCIDENTS if inc.get("node_id") != payload.node_id]
-    state.INCIDENTS.insert(0, new_inc)
-    state.INCIDENTS = state.INCIDENTS[:6]
+    with state.state_lock:
+        state.INCIDENTS = [inc for inc in state.INCIDENTS if inc.get("node_id") != payload.node_id]
+        state.INCIDENTS.insert(0, new_inc)
+        state.INCIDENTS = state.INCIDENTS[:6]
 
     text_report = generate_instant_alert_text(
         node_name=clean_name,
@@ -117,8 +127,7 @@ def post_accident_incident(
     Minimal API endpoint for Fall / Accident Events.
     Enforces the 5.0-second motionless anti-false-alarm rule.
     """
-    if x_edge_key and x_edge_key != state.EDGE_API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid X-Edge-Key")
+    _validate_edge_key(x_edge_key)
 
     if payload.stationary_sec < 5.0:
         return {
@@ -157,9 +166,10 @@ def post_accident_incident(
     }
     save_incident_to_db(new_inc)
 
-    state.INCIDENTS = [inc for inc in state.INCIDENTS if inc.get("node_id") != payload.node_id]
-    state.INCIDENTS.insert(0, new_inc)
-    state.INCIDENTS = state.INCIDENTS[:6]
+    with state.state_lock:
+        state.INCIDENTS = [inc for inc in state.INCIDENTS if inc.get("node_id") != payload.node_id]
+        state.INCIDENTS.insert(0, new_inc)
+        state.INCIDENTS = state.INCIDENTS[:6]
 
     text_report = generate_instant_alert_text(
         node_name=clean_name,

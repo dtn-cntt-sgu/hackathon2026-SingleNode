@@ -1,10 +1,11 @@
 import React from 'react';
-import { Shield, Radio, Video, Map } from 'lucide-react';
+import { Shield, Radio, Video, Map, FileText } from 'lucide-react';
 
 export default function Header({
   backendConnected,
   mobileTab,
-  onSelectMobileTab
+  onSelectMobileTab,
+  onOpenReport
 }) {
   return (
     <header className="app-header glass-panel">
@@ -38,6 +39,16 @@ export default function Header({
             <span>Bản đồ WebGIS</span>
           </button>
         </div>
+
+        {/* Text Report Modal Button */}
+        <button
+          className="header-btn report-btn"
+          onClick={onOpenReport}
+          title="Xem Báo cáo văn bản mộc mạc & gói tin < 150 Bytes"
+        >
+          <FileText size={13} />
+          <span>Báo cáo ca trực</span>
+        </button>
 
         {/* Backend Heartbeat Status Pill */}
         <div className="header-status-pill">

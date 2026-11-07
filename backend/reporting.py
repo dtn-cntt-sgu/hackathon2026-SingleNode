@@ -120,7 +120,7 @@ def generate_shift_digest_text(
     ]
 
     for idx, f_inc in enumerate(flood_list[:3], 1):
-        lines.append(f"   - Điểm {idx}: {f_inc.get('node_name')} ({f_inc.get(' timestamp', f_inc.get('timestamp', 'Hôm nay'))}) - {f_inc.get('message')}")
+        lines.append(f"   - Điểm {idx}: {f_inc.get('node_name')} ({f_inc.get('timestamp', 'Hôm nay')}) - {f_inc.get('message')}")
 
     lines.extend([
         f"2. SỰ CỐ TRƯỢT NGÃ / CẦN HỖ TRỢ: {len(fall_list)} vụ (Cảnh báo mưa trơn: {len(weather_list)})",

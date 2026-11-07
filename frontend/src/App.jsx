@@ -5,6 +5,7 @@ import StationTabs from './components/StationTabs';
 import VideoMonitor from './components/VideoMonitor';
 import MapViewer from './components/MapViewer';
 import IncidentFeed from './components/IncidentFeed';
+import ReportModal from './components/ReportModal';
 import './App.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || (
@@ -162,6 +163,9 @@ export default function App() {
   const [backendConnected, setBackendConnected] = useState(false);
   const [telegramToast, setTelegramToast] = useState(null);
   const [streamError, setStreamError] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportTab, setReportTab] = useState('shift'); // 'instant' | 'shift'
+  const [reportData, setReportData] = useState(null);
 
   // Auto-recover stream if momentarily interrupted
   useEffect(() => {
@@ -217,6 +221,40 @@ export default function App() {
     return () => clearInterval(interval);
   }, [activeNodeId, backendConnected]);
 
+  // Sync text report data when modal is open or when active node / report tab changes
+  useEffect(() => {
+    if (!isReportOpen) return;
+    const fetchReport = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/reports/summary?type=${reportTab}&node_id=${activeNodeId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setReportData(data);
+        }
+      } catch (e) { }
+    };
+    fetchReport();
+  }, [reportTab, isReportOpen, activeNodeId]);
+
+  // Open Text Report Modal
+  const handleOpenReport = async () => {
+    setIsReportOpen(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/reports/summary?type=${reportTab}&node_id=${activeNodeId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setReportData(data);
+      }
+    } catch (e) { }
+  };
+
+  // Copy report text to clipboard
+  const handleCopyText = (text) => {
+    navigator.clipboard.writeText(text);
+    setTelegramToast("📋 Đã sao chép nội dung báo cáo văn bản!");
+    setTimeout(() => setTelegramToast(null), 3000);
+  };
+
   // Select node from tabs or directly from Map marker click
   const handleSelectNode = (nodeId) => {
     setActiveNodeId(nodeId);
@@ -254,6 +292,7 @@ export default function App() {
         backendConnected={backendConnected}
         mobileTab={mobileTab}
         onSelectMobileTab={setMobileTab}
+        onOpenReport={handleOpenReport}
       />
 
       {/* Main Command Center Grid */}
@@ -293,6 +332,23 @@ export default function App() {
           />
         </section>
       </div>
+
+      {/* Plain-Text & Bandwidth Proof Report Modal */}
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        reportTab={reportTab}
+        setReportTab={setReportTab}
+        reportData={reportData}
+        activeNode={activeNode}
+        depthValue={metrics?.flood?.depth_cm || 0}
+        framesInRam={metrics?.privacy?.frames_processed_in_ram || 240}
+        payloadBytes={metrics?.payload_bytes || 82}
+        payloadJson={metrics?.payload_json || '{"node_id":"node-sgu-01","type":"FLOOD","val":22.4,"unit":"cm"}'}
+        onCopyText={handleCopyText}
+        onSendTelegram={handleSendTelegram}
+        firstIncident={incidents[0]}
+      />
     </div>
   );
 }
