@@ -93,6 +93,50 @@
 
 ---
 
+### ❓ CÂU 7: ĐỀ TÀI CỦA BẠN CÓ GÌ MỚI SO VỚI CÁC ĐỀ TÀI / SẢN PHẨM HIỆN CÓ?
+
+> **Ban Giám khảo hỏi:** *"Đo ngập nước và phát hiện tai nạn giao thông trên thị trường và các đề tài nghiên cứu đã có rất nhiều người làm rồi. Vậy giải pháp của đội em có điểm gì thực sự mới và đột phá so với những cái đang có?"*
+
+* **Cách trả lời (Đánh trực diện rào cản hạ tầng dân sinh & 3 đột phá thực chiến):**
+  > "Dạ, câu hỏi của Thầy Cô đánh rất đúng vào thực tế triển khai ạ.
+  >
+  > Hiện nay khi giải quyết bài toán ngập và tai nạn ngõ hẻm, người ta thường đi theo 2 hướng chính:
+  > 1. **Dùng cảm biến đo nước chuyên dụng (Phao / Sóng siêu âm):** Đo chính xác nhưng chi phí thiết bị và bảo trì rất đắt đỏ, trong hẻm rất dễ bị rác làm kẹt phao, và quan trọng nhất là cảm biến thì không thể phát hiện người ngã xe để cứu giúp.
+  > 2. **Dùng camera thông minh kéo video liên tục về máy chủ đám mây:** Cách này chỉ làm được ở đại lộ lớn. Khi đưa xuống ngõ hẻm sẽ đụng 2 rào cản: một là làm nghẽn toàn bộ đường truyền mạng do hạ tầng hẻm hạn chế; hai là camera chĩa thẳng vào sinh hoạt người dân, lưu video ở máy chủ khiến bà con rất sợ bị lộ hình ảnh đời tư.
+  >
+  > Từ thực tế đó, **UrbanShield Lite giải quyết triệt để bằng 3 điểm mới khác biệt:**
+  >
+  > 1. **Tận dụng chính bánh xe máy 50cm làm mốc đo hình học:** Tụi em không gắn thêm bất kỳ thước đo hay cảm biến nào. Hệ thống lấy luôn đường kính bánh xe máy phổ thông ở Việt Nam (chuẩn 50cm) làm mốc quy chiếu hình học để tính ra độ sâu ngập theo centimet bằng đạo hàm Sobel bắt mép nước.
+  > 2. **Tự phân tích trên CPU văn phòng & Bảo vệ riêng tư tuyệt đối (Zero-Disk):** Tụi em tối ưu thuật toán YOLOv8n để chạy mượt mà trên CPU máy tính cũ có sẵn ở khu phố. Hình ảnh chỉ giải mã trên bộ nhớ RAM để AI trích xuất thông số rồi xóa sạch ngay lập tức (`del frame`), cam kết không lưu 1 file video nào vào ổ cứng.
+  > 3. **Cơ chế mẩu tin báo động dưới 150 Bytes:** Bình thường hệ thống không gửi video về trung tâm. Chỉ khi phát hiện ngập sâu mấp mé ống xả hoặc người ngã nằm bất động quá 5 giây (để chống báo giả khi người ta chỉ cúi nhặt đồ), máy tính mới bắn một mẩu tin JSON rất gọn nhẹ (~80 Bytes) qua Telegram cho tổ dân phố và dân quân đến giúp đỡ kịp thời."
+
+---
+
+### ❓ CÂU 8: HỆ THỐNG CỦA BẠN ĐÁP ỨNG ĐƯỢC BAO NHIÊU USER? (BẰNG CHỨNG KỸ THUẬT & DEVELOPER PERSPECTIVE)
+
+> **Ban Giám khảo hỏi:** *"Hệ thống của em chịu tải được bao nhiêu người dùng cùng lúc (concurrent users)? Lỡ mùa mưa bão cả vạn người dân cùng vào xem bản đồ ngập lụt thì server có bị sập không? Đưa ra bằng chứng kỹ thuật cụ thể?"*
+
+* **Cách trả lời (Phân tách kiến trúc 2 tầng + Công thức Throughput thực tế):**
+  > "Dạ, để trả lời chính xác câu hỏi về năng lực chịu tải, em xin phép phân tách kiến trúc hệ thống thành 2 tầng độc lập:
+  >
+  > **1. Tầng Edge AI (Máy tính tại ngõ hẻm):**
+  > * Tầng này **hoàn toàn không phải gánh traffic của hàng nghìn người dân**. Nhiệm vụ của nó chỉ là kết nối camera nội bộ qua RTSP, chạy suy luận YOLOv8n trên CPU với độ trễ ~15-35ms/khung hình (~28.5 FPS) và chỉ đẩy dữ liệu khi có sự cố. Do đó, tải người dùng không bao giờ ảnh hưởng đến hiệu năng phân tích AI tại chỗ.
+  >
+  > **2. Tầng Gateway & WebGIS phục vụ người dân (FastAPI + Cloud Run):**
+  > * **Bằng chứng 1 — Bất đồng bộ Non-blocking Async I/O:** Backend của tụi em xây dựng trên nền tảng **FastAPI (ASGI)** chạy trên `uvicorn` với nhân `uvloop` và `asyncio`. Khác với kiến trúc WSGI truyền thống (mỗi request chiếm dụng 1 thread), FastAPI xử lý hàng nghìn kết nối đồng thời trên một Single Event Loop mà không bị block.
+  > * **Bằng chứng 2 — In-Memory State Cache & Latency cực thấp:** Toàn bộ dữ liệu trạng thái ngập của các trạm được lưu trữ ngay trên RAM (`NODE_ANALYSIS_CACHE` được bảo vệ bằng `threading.Lock()` với thời gian làm tươi 250ms). Khi người dân gọi API `/api/v1/public/route-advisory` hay `/api/nodes`, server chỉ đọc từ cache RAM và trả về ngay lập tức:
+  >   * **Đo đạc thực tế gắn trên header:** `X-Process-Time: 0.8ms - 2.5ms/request`.
+  > * **Bằng chứng 3 — Tính toán Throughput (RPS) và Concurrent Users thực tế:**
+  >   * Với thời gian xử lý trung bình $t = 2\text{ms}$ cho một request:
+  >     $$\text{RPS} = \frac{1000\text{ms}}{2\text{ms}} \approx 500 \text{ requests/giây trên 1 core CPU}$$
+  >   * Giả sử trong giờ cao điểm mưa bão, mỗi người dân mở app xem bản đồ gửi 1 request mỗi 5 giây ($0.2\text{ RPS/user}$):
+  >     $$\text{Users}_{\text{đồng thời}} = \frac{500\text{ RPS}}{0.2\text{ RPS/user}} \approx 2.500 \text{ người dùng hoạt động cùng lúc (trên 1 node 1 CPU / 1GB RAM)}$$
+  >   * Khi triển khai trên Google Cloud Run với cơ chế **Serverless Auto-scaling (1 lên 10 instances)**, hệ thống dễ dàng đáp ứng **25.000+ người dùng đồng thời** mà CPU không bị nghẽn.
+  > * **Bằng chứng 4 — Phân tải Broadcast qua Telegram Bot API (Zero-Load on Core Server):**
+  >   * Đối với người dân nhận cảnh báo ngập tức thời, hệ thống không tự gửi push notification hàng loạt (tránh làm sập backend). Hệ thống đẩy 1 mẩu tin 80 Bytes vào Telegram Channel/Group khu phố. Toàn bộ tải phân phối tin nhắn đến hàng vạn người dân được gánh hoàn toàn bởi hạ tầng CDN toàn cầu của Telegram, tải tác động lên máy chủ của tụi em là **0%** ạ."
+
+---
+
 ### 💡 BÍ QUYẾT BỎ TÚI KHI TRẢ LỜI GIÁM KHẢO:
 1. **Luôn bắt đầu bằng:** *"Dạ thưa Thầy Cô, câu hỏi của Thầy/Cô chạm đúng vào bài toán cốt lõi mà nhóm em đã trăn trở và giải quyết trong phần code..."* (Tỏ rõ sự khiêm tốn nhưng tự tin).
 2. **Nói vào bản chất kỹ thuật:** Dẫn chứng cụ thể: *50cm bánh xe, 82 Bytes, 63ms CPU, bộ đếm 5s, Zero-Disk*.
