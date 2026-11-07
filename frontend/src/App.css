@@ -1209,7 +1209,19 @@
 
   .dashboard-grid.show-map-only .right-column {
     display: flex;
+    flex-direction: column;
     width: 100%;
+    gap: 12px;
+  }
+
+  .dashboard-grid.show-map-only .map-card-wrapper {
+    height: 380px;
+    min-height: 380px;
+    width: 100%;
+    display: block;
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
   }
 
   .telemetry-bar-dock {

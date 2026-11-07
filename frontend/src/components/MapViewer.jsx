@@ -8,6 +8,23 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
   const polylinesRef = useRef([]);
   const hasFittedBoundsRef = useRef(false);
 
+  // Auto-invalidate map size when tab visibility or container dimensions change (Fix blank map on mobile)
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    });
+
+    resizeObserver.observe(mapContainerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -28,6 +45,14 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
     }
 
     const map = mapInstanceRef.current;
+
+    // Invalidate size immediately and after transition to prevent blank white container on mobile devices
+    map.invalidateSize();
+    const timer = setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    }, 250);
 
     // Clear old markers & alley polylines
     Object.values(markersRef.current).forEach(m => m.remove());
@@ -129,11 +154,15 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
       }
     }
 
+    return () => {
+      clearTimeout(timer);
+    };
+
   }, [nodes, activeNodeId, onSelectNode]);
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100%', borderRadius: 'inherit' }} />
+    <div style={{ width: '100%', height: '100%', minHeight: '300px', position: 'relative' }}>
+      <div ref={mapContainerRef} style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'inherit' }} />
     </div>
   );
 }
