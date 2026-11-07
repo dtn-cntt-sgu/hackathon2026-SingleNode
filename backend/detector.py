@@ -567,7 +567,7 @@ class UrbanShieldDetector:
         # Filter strictly for genuine horizontal / fallen candidates (W/H > 1.0 or W/H > 0.90 near vehicle)
         # Normal standing or riding people (W/H < 0.85) are NEVER candidates.
         for p in persons:
-            if p["height"] >= 28 and p["width"] >= 30 and p["confidence"] >= 0.18 and p["center"][1] >= 0.40 * h:
+            if p["height"] >= 20 and p["width"] >= 20 and p["confidence"] >= 0.15 and p["center"][1] >= 0.35 * h:
                 # In flooded street conditions, filter out faint horizontal water ripples / reflections
                 if is_water_surface and len(vehicle_centers) > 0:
                     min_v_dist = min([float(np.hypot(p["center"][0] - vx, p["center"][1] - vy)) for vx, vy in vehicle_centers])
@@ -581,15 +581,15 @@ class UrbanShieldDetector:
                     break
 
         # Detect overturned / flat fallen motorcycle on active roadway
-        # Upright or parked motorcycles (AR < 2.0 or side-profile AR ~1.65) are NEVER fall candidates!
-        # A genuinely flat skidded motorcycle on asphalt has AR >= 2.0, low height (<= 35px), and lies in roadway corridor.
+        # Upright or parked motorcycles (AR < 1.60) are NEVER fall candidates!
+        # A genuinely flat skidded motorcycle on asphalt has AR >= 1.65, low height (<= 75px), and lies in roadway corridor.
         if active_fallen_person is None:
             for m in motorcycles:
                 if (
-                    m["aspect_ratio"] >= 2.0
-                    and m["height"] <= 35
-                    and m["center"][1] >= 0.50 * h
-                    and (0.20 * w <= m["center"][0] <= 0.80 * w)
+                    m["aspect_ratio"] >= 1.65
+                    and m["height"] <= 75
+                    and m["center"][1] >= 0.40 * h
+                    and (0.15 * w <= m["center"][0] <= 0.85 * w)
                 ):
                     active_fallen_person = m
                     break
@@ -640,7 +640,7 @@ class UrbanShieldDetector:
             best_cand = None
             for cid in list(fallen_candidates.keys()):
                 cand = fallen_candidates[cid]
-                if curr_time - cand["last_seen"] <= 1.2:
+                if curr_time - cand["last_seen"] <= 2.2:
                     elapsed_c = curr_time - cand["first_seen"]
                     if elapsed_c > 8.5:
                         cand["first_seen"] = curr_time
