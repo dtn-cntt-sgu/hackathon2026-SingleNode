@@ -9,11 +9,10 @@ export default function VideoMonitor({
   apiBase,
   metrics
 }) {
-  const vehiclesCount = metrics?.vehicles_count ?? (metrics?.flood?.has_reference ? 1 : 0);
-  const hasRefObject = Boolean(vehiclesCount > 0 && metrics?.flood?.has_reference === true);
-  const depthValue = (hasRefObject && metrics?.flood?.detected) ? metrics.flood.depth_cm : 0;
-  const lastRefDepth = metrics?.flood?.last_ref_depth_cm || 0;
+  const depthValue = Number(metrics?.flood?.depth_cm || 0);
+  const hasRefObject = Boolean(metrics?.flood?.has_reference || depthValue > 0 || (metrics?.vehicles_count > 0));
   const depthPercent = Math.min(100, Math.max(0, (depthValue / 50) * 100));
+  const lastRefDepth = metrics?.flood?.last_ref_depth_cm || 0;
 
   // Accident / Fall telemetry
   const isAccident = Boolean(metrics?.accident?.detected);
@@ -77,7 +76,7 @@ export default function VideoMonitor({
               <span className="dual-card-title">1. MỰC NƯỚC NGẬP</span>
             </div>
             <div className="dual-card-badge-wrap">
-              {hasRefObject ? (
+              {depthValue > 0 ? (
                 <div className="dual-val-badge">
                   <span className="val-number">{depthValue.toFixed(1)}</span>
                   <span className="val-unit">cm / 50cm</span>

@@ -276,11 +276,12 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
         "infer_time_ms": 32.0,
         "clahe_active": False,
         "detections_count": 3,
+        "vehicles_count": 3,
         "payload_bytes": _p1_bytes,
         "payload_json": _p1_json,
         "privacy": {"ram_only": True, "frames_processed_in_ram": 120, "disk_writes": 0},
         "accident": {"detected": False, "reason": "", "motionless_sec": 0.0},
-        "flood": {"detected": True, "depth_cm": 22.4, "level": "DANGER"},
+        "flood": {"detected": True, "has_reference": True, "water_surface_present": True, "depth_cm": 22.4, "level": "DANGER"},
         "updated_at": time.time()
     },
     "node-sgu-02": {
@@ -288,11 +289,12 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
         "infer_time_ms": 35.0,
         "clahe_active": False,
         "detections_count": 2,
+        "vehicles_count": 2,
         "payload_bytes": _p2_bytes,
         "payload_json": _p2_json,
         "privacy": {"ram_only": True, "frames_processed_in_ram": 95, "disk_writes": 0},
         "accident": {"detected": False, "reason": "", "motionless_sec": 0.0},
-        "flood": {"detected": True, "depth_cm": 18.2, "level": "WARNING"},
+        "flood": {"detected": True, "has_reference": True, "water_surface_present": True, "depth_cm": 18.2, "level": "WARNING"},
         "updated_at": time.time()
     },
     "node-sgu-03": {
@@ -300,11 +302,12 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
         "infer_time_ms": 28.0,
         "clahe_active": True,
         "detections_count": 4,
+        "vehicles_count": 3,
         "payload_bytes": _p3_bytes,
         "payload_json": _p3_json,
         "privacy": {"ram_only": True, "frames_processed_in_ram": 110, "disk_writes": 0},
         "accident": {"detected": False, "reason": "", "motionless_sec": 0.0},
-        "flood": {"detected": True, "depth_cm": 13.0, "level": "WARNING"},
+        "flood": {"detected": True, "has_reference": True, "water_surface_present": True, "depth_cm": 13.0, "level": "WARNING"},
         "updated_at": time.time()
     },
     "node-sgu-04": {
@@ -312,11 +315,12 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
         "infer_time_ms": 30.0,
         "clahe_active": False,
         "detections_count": 3,
+        "vehicles_count": 2,
         "payload_bytes": _p4_bytes,
         "payload_json": _p4_json,
         "privacy": {"ram_only": True, "frames_processed_in_ram": 80, "disk_writes": 0},
         "accident": {"detected": False, "reason": "", "motionless_sec": 0.0},
-        "flood": {"detected": True, "depth_cm": 11.2, "level": "WARNING"},
+        "flood": {"detected": True, "has_reference": True, "water_surface_present": True, "depth_cm": 11.2, "level": "WARNING"},
         "updated_at": time.time()
     },
     "node-sgu-05": {
@@ -324,11 +328,12 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
         "infer_time_ms": 32.0,
         "clahe_active": True,
         "detections_count": 3,
+        "vehicles_count": 1,
         "payload_bytes": _p5_bytes,
         "payload_json": _p5_json,
         "privacy": {"ram_only": True, "frames_processed_in_ram": 140, "disk_writes": 0},
         "accident": {"detected": True, "reason": "Phát hiện người ngã xe nằm bất động 5.2s", "motionless_sec": 5.2},
-        "flood": {"detected": False, "depth_cm": 0.0, "level": "SAFE"},
+        "flood": {"detected": False, "has_reference": False, "water_surface_present": False, "depth_cm": 0.0, "level": "SAFE"},
         "updated_at": time.time()
     }
 }
