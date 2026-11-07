@@ -1,15 +1,4 @@
-# Multi-stage Dockerfile for Google Cloud Run Deployment
-# Stage 1: Build React WebGIS Dashboard Frontend
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
-
-COPY frontend/package*.json ./
-RUN npm ci
-
-COPY frontend/ ./
-RUN npm run build
-
-# Stage 2: Production Python Backend + Pre-built Frontend (Single Container)
+# Single-stage Production Container for Google Cloud Run
 FROM python:3.10-slim
 WORKDIR /app
 
@@ -24,11 +13,8 @@ COPY backend/requirements.txt ./backend/
 RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r ./backend/requirements.txt
 
-# Copy backend application code
+# Copy backend application code (including pre-compiled static WebGIS dashboard)
 COPY backend/ ./backend/
-
-# Copy compiled frontend build into backend static directory
-COPY --from=frontend-builder /app/frontend/dist ./backend/static/
 
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8080
@@ -38,4 +24,3 @@ ENV TZ=Asia/Ho_Chi_Minh
 EXPOSE 8080
 
 CMD ["sh", "-c", "uvicorn main:app --app-dir backend --host 0.0.0.0 --port ${PORT:-8080}"]
-
