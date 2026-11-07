@@ -1,0 +1,44 @@
+# Environments and secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# Dependencies
+node_modules/
+vendor/
+venv/
+.venv/
+__pycache__/
+
+# Build outputs
+dist/
+build/
+out/
+*.log
+*.pt
+*.db
+*.sqlite
+*.sqlite3
+.pytest_cache/
+
+# Unused large video recordings (only track the 5 official station demo videos)
+backend/videos/research_night_1.mp4
+backend/videos/research_night_2.mp4
+backend/videos/test_dry_road.mp4
+flood.mp4
+flood2.mp4
+flood3.mp4
+flood4.mp4
+flood_accident_1.mp4
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.idea/
+
+# Keep .vscode/settings.json if customized for the team
+# Agents & workspace customizations
+.agents/
