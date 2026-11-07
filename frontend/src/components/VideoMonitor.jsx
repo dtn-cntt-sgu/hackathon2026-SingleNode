@@ -135,8 +135,8 @@ export default function VideoMonitor({
                 {isAccident
                   ? '🚨 SỰ CỐ NGÃ XE'
                   : isCandidateFalling
-                  ? `${motionlessSec.toFixed(1)}s / 5.0s`
-                  : '🟢 AN TOÀN'}
+                    ? `${motionlessSec.toFixed(1)}s / 5.0s`
+                    : '🟢 AN TOÀN'}
               </span>
             </div>
           </div>
