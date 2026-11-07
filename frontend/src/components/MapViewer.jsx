@@ -120,6 +120,7 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
       polylinesRef.current.push(glowLine, alleyLine);
 
       const shortName = node.name.split('-')[0].trim();
+      const labelPosClass = (node.id === 'node-sgu-04' || node.id === 'node-sgu-05') ? 'pin-label-top' : 'pin-label-bottom';
 
       const customIcon = L.divIcon({
         className: 'custom-map-marker',
@@ -127,7 +128,7 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
           <div class="map-radar-pin ${colorClass} ${isSelected ? 'selected-pin' : ''}">
             <div class="pin-pulse" style="border-color: ${statusColor}"></div>
             <div class="pin-dot" style="background-color: ${statusColor}"></div>
-            <div class="pin-label">${shortName}</div>
+            <div class="pin-label ${labelPosClass}">${shortName}</div>
           </div>
         `,
         iconSize: [40, 40],

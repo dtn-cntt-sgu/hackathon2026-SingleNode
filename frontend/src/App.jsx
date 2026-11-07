@@ -205,7 +205,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Sync metrics for selected node (fast 600ms poll for responsive 5s fall countdown)
+  // Sync metrics for selected node (fast 250ms poll for real-time synchronization with video HUD)
   useEffect(() => {
     if (!backendConnected) return;
     const fetchMetrics = async () => {
@@ -217,7 +217,7 @@ export default function App() {
         }
       } catch (e) { }
     };
-    const interval = setInterval(fetchMetrics, 600);
+    const interval = setInterval(fetchMetrics, 250);
     return () => clearInterval(interval);
   }, [activeNodeId, backendConnected]);
 

@@ -427,19 +427,23 @@
 .video-feed-wrapper {
   position: relative;
   width: 100%;
+  flex: 1 1 0;
+  min-height: 200px;
+  max-height: calc(100% - 100px);
   aspect-ratio: 16 / 9;
-  min-height: 280px;
   background: #000000;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
 }
 
 .video-stream-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #000000;
   display: block;
 }
 
@@ -514,9 +518,12 @@
 .video-monitor-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 6px;
   padding: 0;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Side-by-Side Dual Status Grid (50% - 50%) */
@@ -526,6 +533,8 @@
   gap: 8px;
   flex-shrink: 0;
   width: 100%;
+  padding: 0 8px 4px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 680px) {
@@ -538,13 +547,15 @@
   background: #ffffff;
   border: 1px solid var(--slate-200);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 6px 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 4px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   transition: all 0.25s ease;
-  min-height: 82px;
+  min-height: 78px;
+  box-sizing: border-box;
 }
 
 /* Card 1: Flood State Colors */
@@ -705,8 +716,9 @@
 .status-label.waiting { color: #0369a1; font-weight: 600; }
 
 .mini-track {
-  height: 8px;
-  margin-top: 1px;
+  height: 7px;
+  margin-top: 3px;
+  margin-bottom: 11px;
 }
 .mini-track .mark-label {
   font-size: 0.58rem;
@@ -792,8 +804,9 @@
 
 /* Map Card Wrapper */
 .map-card-wrapper {
-  flex: 1.15;
-  min-height: 200px;
+  flex: 1.1;
+  min-height: 180px;
+  max-height: 48%;
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -819,8 +832,8 @@
 
 /* Incidents Feed Panel */
 .incidents-panel {
-  flex: 0.85;
-  min-height: 180px;
+  flex: 0.9;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -833,7 +846,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--slate-200);
   flex-shrink: 0;
 }
@@ -856,21 +869,33 @@
 
 .incidents-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 8px 10px;
+  padding: 6px 8px 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.incidents-list::-webkit-scrollbar {
+  width: 4px;
+}
+.incidents-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
 .incident-item {
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-radius: 6px;
   border: 1px solid;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .incident-item.danger {
@@ -1038,6 +1063,14 @@
   border: 1px solid #cbd5e1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   pointer-events: none;
+}
+
+.pin-label.pin-label-top {
+  top: -16px;
+}
+
+.pin-label.pin-label-bottom {
+  top: 22px;
 }
 
 .selected-pin .pin-label {
