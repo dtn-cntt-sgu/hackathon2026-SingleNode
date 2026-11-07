@@ -153,3 +153,4 @@ BƯỚC 4: DEMO TIN NHẮN CẢNH BÁO TELEGRAM (< 150 BYTES)
   * **Đáp:** *"Dạ, hệ thống có thuật toán cân bằng sáng thích ứng **CLAHE** trong file `detector.py`. Khi độ sáng trung bình kênh L tụt xuống dưới 115, thuật toán tự động khuếch đại độ tương phản cục bộ, triệt tiêu ánh sáng lóa của đèn đường để nhìn rõ ranh giới lốp xe."*
 * **Hỏi 3: *"Hình ảnh camera ngõ hẻm có làm lộ bí mật đời tư người dân không?"***
   * **Đáp:** *"Dạ, hệ thống áp dụng nguyên tắc **Privacy-by-Design Zero-Disk**: Video chỉ được giải mã trên RAM để lấy tọa độ hộp số rồi hủy ngay (`del frame`), ổ cứng ghi nhận đúng **0 byte ảnh/video**. Hệ thống cũng không dùng nhận diện khuôn mặt và không đọc biển số xe."*
+
