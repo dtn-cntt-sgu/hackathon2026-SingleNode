@@ -199,5 +199,10 @@ def trigger_telegram_alert(req: TelegramAlertPayload):
         motionless_sec=float(acc_info.get("motionless_sec", 0.0)),
         gps=f"{node['lat']}, {node['lng']}"
     )
-    return send_telegram_alert(text_report, req.incident_id)
+    return send_telegram_alert(
+        text_report,
+        req.incident_id,
+        lat=float(node.get("lat", 10.7545)),
+        lng=float(node.get("lng", 106.7115))
+    )
 

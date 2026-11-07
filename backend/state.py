@@ -444,16 +444,16 @@ def stream_generator(node_id: str, custom_fps: Optional[float] = None):
                             except Exception as db_err:
                                 print(f"[DB AUTO-SAVE ERROR] {db_err}")
 
-                            def _dispatch_tg(text_msg, inc_ident):
+                            def _dispatch_tg(text_msg, inc_ident, n_lat, n_lng):
                                 try:
-                                    tg_res = send_telegram_alert(text_msg, inc_ident)
+                                    tg_res = send_telegram_alert(text_msg, inc_ident, lat=n_lat, lng=n_lng)
                                     print(f"[*] AUTO TELEGRAM ALERT DELIVERED: {tg_res.get('mode')} -> {tg_res.get('message')}")
                                 except Exception as tg_err:
                                     print(f"[!] TELEGRAM DISPATCH ERROR: {tg_err}")
 
                             threading.Thread(
                                 target=_dispatch_tg,
-                                args=(auto_report, new_auto_inc["id"]),
+                                args=(auto_report, new_auto_inc["id"], float(node.get("lat", 10.7545)), float(node.get("lng", 106.7115))),
                                 daemon=True
                             ).start()
             except Exception as loop_err:
