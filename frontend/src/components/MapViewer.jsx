@@ -7,6 +7,7 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
   const markersRef = useRef({});
   const polylinesRef = useRef([]);
   const hasFittedBoundsRef = useRef(false);
+  const lastPannedNodeIdRef = useRef(null);
 
   // Auto-invalidate map size when tab visibility or container dimensions change (Fix blank map on mobile)
   useEffect(() => {
@@ -147,10 +148,11 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
       markersRef.current[node.id] = marker;
     });
 
-    // Smoothly pan map to selected station when user switches stations
-    if (activeNodeId && nodes && nodes.length > 0) {
+    // Smoothly pan map ONLY when user explicitly switches to a different station, NOT on recurring 3s polling
+    if (activeNodeId && nodes && nodes.length > 0 && lastPannedNodeIdRef.current !== activeNodeId) {
       const activeNode = nodes.find(n => n.id === activeNodeId);
       if (activeNode) {
+        lastPannedNodeIdRef.current = activeNodeId;
         map.panTo([activeNode.lat, activeNode.lng], { animate: true, duration: 0.6 });
       }
     }
@@ -162,8 +164,8 @@ export default function MapViewer({ nodes, activeNodeId, onSelectNode }) {
   }, [nodes, activeNodeId, onSelectNode]);
 
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '300px', position: 'relative' }}>
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100%', minHeight: '300px', borderRadius: 'inherit' }} />
+    <div style={{ width: '100%', height: '100%', minHeight: '180px', position: 'relative' }}>
+      <div ref={mapContainerRef} style={{ width: '100%', height: '100%', minHeight: '180px', borderRadius: 'inherit' }} />
     </div>
   );
 }
