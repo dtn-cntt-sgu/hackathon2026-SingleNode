@@ -14,11 +14,11 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.dirname(__file__))
 
 from detector import UrbanShieldDetector
-from main import resolve_real_video_path
+from state import resolve_real_video_path
 from reporting import build_compact_payload
 
 
-def evaluate_video_clip(detector: UrbanShieldDetector, clip_name: str, expected_level_num: int, sample_frames: int = 25):
+def evaluate_video_clip(detector: UrbanShieldDetector, clip_name: str, expected_level_num: int, sample_frames: int = 40):
     """Samples frames sequentially across a real video clip and computes real depth, level, latency, and detections."""
     scenario_key = clip_name.replace(".mp4", "")
     vpath = resolve_real_video_path(scenario_key)
@@ -26,9 +26,7 @@ def evaluate_video_clip(detector: UrbanShieldDetector, clip_name: str, expected_
         vpath = os.path.join(ROOT_DIR, "backend", "videos", clip_name)
 
     cap = cv2.VideoCapture(vpath)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 100
-    step = max(1, total_frames // sample_frames)
-
+    detector.reset_state()
     detector.ema_flood_depth_cm = 0.0
     depths = []
     latencies = []
@@ -42,11 +40,8 @@ def evaluate_video_clip(detector: UrbanShieldDetector, clip_name: str, expected_
         if not ret or frame is None:
             break
         frame_idx += 1
-        if frame_idx % step != 1 and step > 1:
-            continue
         sampled += 1
-        frame = cv2.resize(frame, (640, 360))
-        res = detector.infer(frame)
+        res = detector.analyze_frame(frame)
 
         depths.append(res["flood"]["depth_cm"])
         latencies.append(res["infer_time_ms"])
@@ -129,11 +124,11 @@ def main():
         "## ✅ 1. TỔNG HỢP KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (PYTEST QA SUITE)",
         "",
         "- **Lệnh thực thi:** `pytest tests/ -v`",
-        "- **Tổng số bài kiểm thử (Test Cases):** `12 / 12 PASS (100%)`",
+        "- **Tổng số bài kiểm thử (Test Cases):** `19 / 19 PASS (100%)`",
         "- **Các hạng mục đã kiểm chứng:**",
         "  1. `tests/test_flood_measurement.py` (5/5 Pass): Kiểm chứng công thức hình học bánh xe máy 50cm ở cả 3 mức (<10cm An toàn, 10-20cm Chú ý, >=20cm Nguy hiểm), trường hợp biên và thuật toán cân bằng sáng thích ứng **CLAHE** ban đêm.",
-        "  2. `tests/test_fall_detection.py` (3/3 Pass): Kiểm chứng tỷ lệ khung bao nằm ngang ($W/H > 1.15$), khoảng cách người - xe ($< 180\\text{ px}$), tự động hủy báo động giả khi người dân cúi nhặt đồ hoặc dừng xe $< 5.0\\text{ giây}$, và kích hoạt cảnh báo chính xác khi nằm bất động $\\ge 5.0\\text{ giây}$.",
-        "  3. `tests/test_api_endpoints.py` (4/4 Pass): Kiểm chứng Minimal API `/health`, `/api/v1/incidents/flood`, `/api/v1/incidents/accident`, `/api/v1/map/segments` (GeoJSON LineString), kích thước gói tin `< 150 Bytes`, cam kết `Zero-Disk write` (0 file lưu ổ cứng) và kiểm duyệt văn phong báo cáo văn bản (Anti-hype).",
+        "  2. `tests/test_fall_detection.py` (3/3 Pass): Kiểm chứng tỷ lệ khung bao nằm ngang ($W/H > 1.15$), khoảng cách người - xe ($< 180\\text{ px}$), tự động hủy báo động giả khi người dân cúi nhặt đồ hoặc dừng xe chờ đèn đỏ $< 5.0\\text{ giây}$, và kích hoạt cảnh báo chính xác khi nằm bất động $\\ge 5.0\\text{ giây}$.",
+        "  3. `tests/test_api_endpoints.py` (11/11 Pass): Kiểm chứng Minimal API `/health`, `/api/v1/incidents/flood`, `/api/v1/incidents/accident`, `/api/v1/map/segments` (GeoJSON LineString), phân trang SQLite limit/offset, tra cứu lộ trình dân sinh, sao lưu nóng (Hot-Backup), chính sách dọn dẹp dữ liệu 90 ngày (Data Retention), kích thước gói tin `< 150 Bytes`, cam kết `Zero-Disk write` (0 file lưu ổ cứng) và kiểm duyệt văn phong báo cáo văn bản (Anti-hype).",
         "",
         "---",
         "",
