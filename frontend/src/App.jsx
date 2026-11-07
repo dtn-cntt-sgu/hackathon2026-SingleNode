@@ -55,7 +55,7 @@ const INITIAL_NODES = [
   },
   {
     id: "node-sgu-03",
-    name: "Trạm 03 - Tuyến Lê Văn Lương (Khu ngập triều Rạch Đỉa)",
+    name: "Trạm 03 - Tuyến Lê Văn Lương (Đoạn cao ráo, khô thoáng)",
     street_segment: "Tuyến Lê Văn Lương - Hẻm 482, Phường Tân Phong, Quận 7",
     lat: 10.7420,
     lng: 106.7055,
@@ -67,8 +67,8 @@ const INITIAL_NODES = [
       [106.7063, 10.7400]
     ],
     type: "Camera Tổ Dân Phố #03",
-    scenario: "real_flood_3",
-    status: "warning",
+    scenario: "test_dry_road",
+    status: "safe",
     device: "Webcam USB tiêu chuẩn"
   },
   {

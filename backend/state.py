@@ -85,7 +85,7 @@ NODES: Dict[str, Dict[str, Any]] = {
     },
     "node-sgu-03": {
         "id": "node-sgu-03",
-        "name": "Trạm 03 - Tuyến Lê Văn Lương (Khu ngập triều Rạch Đỉa)",
+        "name": "Trạm 03 - Tuyến Lê Văn Lương (Đoạn cao ráo, khô thoáng)",
         "street_segment": "Tuyến Lê Văn Lương - Hẻm 482, Phường Tân Phong, Quận 7",
         "lat": 10.7420,
         "lng": 106.7055,
@@ -97,8 +97,8 @@ NODES: Dict[str, Dict[str, Any]] = {
             [106.7063, 10.7400]
         ],
         "type": "Camera Tổ Dân Phố #03",
-        "scenario": "real_flood_3",
-        "status": "warning",
+        "scenario": "test_dry_road",
+        "status": "safe",
         "last_ping": time.time(),
         "device": "Webcam USB tiêu chuẩn"
     },
@@ -166,18 +166,18 @@ INCIDENTS: List[Dict[str, Any]] = [
         "telegram_sent": True
     },
     {
-        "id": "inc-003",
-        "node_id": "node-sgu-03",
-        "node_name": "Trạm 03 - Tuyến Lê Văn Lương",
+        "id": "inc-002",
+        "node_id": "node-sgu-02",
+        "node_name": "Trạm 02 - Tuyến Huỳnh Tấn Phát",
         "type": "FLOOD",
         "level": "WARNING",
-        "val": 13.0,
+        "val": 18.2,
         "unit": "cm",
-        "payload_json": _p3_json,
-        "payload_bytes": _p3_bytes,
-        "message": "Nước ngập 13.0cm mép pô xe máy, phương tiện bắt đầu khó đi",
-        "timestamp": "10:17:45",
-        "gps": "10.7420, 106.7055",
+        "payload_json": _p2_json,
+        "payload_bytes": _p2_bytes,
+        "message": "Nước ngập 18.2cm mép pô xe máy, phương tiện di chuyển chậm",
+        "timestamp": "10:16:10",
+        "gps": "10.7335, 106.7320",
         "telegram_sent": True
     },
     {
@@ -209,11 +209,12 @@ VIDEO_CAPS: Dict[str, Any] = {}
 REAL_VIDEOS_MAP = {
     "real_flood_1": ["real_flood_1.mp4", "flood.mp4"],
     "real_flood_2": ["real_flood_2.mp4", "flood2.mp4"],
-    "real_flood_3": ["real_flood_3.mp4", "flood_6.mp4", "flood3.mp4"],
+    "real_flood_3": ["test_dry_road.mp4", "real_flood_3.mp4", "flood_6.mp4", "flood3.mp4"],
     "real_flood_4": ["real_flood_4.mp4", "flood_5.mp4", "flood4.mp4"],
     "real_flood_5": ["real_flood_4.mp4", "flood_5.mp4"],
     "real_flood_6": ["real_flood_3.mp4", "flood_6.mp4"],
-    "real_accident_1": ["real_accident_1.mp4", "accident_1.mp4", "flood_accident_1.mp4"]
+    "real_accident_1": ["real_accident_1.mp4", "accident_1.mp4", "flood_accident_1.mp4"],
+    "test_dry_road": ["test_dry_road.mp4"]
 }
 
 
@@ -300,14 +301,14 @@ NODE_LATEST_METRICS: Dict[str, Any] = {
     "node-sgu-03": {
         "fps": 28.5,
         "infer_time_ms": 28.0,
-        "clahe_active": True,
-        "detections_count": 4,
-        "vehicles_count": 3,
-        "payload_bytes": _p3_bytes,
-        "payload_json": _p3_json,
+        "clahe_active": False,
+        "detections_count": 5,
+        "vehicles_count": 4,
+        "payload_bytes": 78,
+        "payload_json": '{"node_id":"node-sgu-03","type":"NORMAL","val":0.0,"unit":"cm"}',
         "privacy": {"ram_only": True, "frames_processed_in_ram": 110, "disk_writes": 0},
         "accident": {"detected": False, "reason": "", "motionless_sec": 0.0},
-        "flood": {"detected": True, "has_reference": True, "water_surface_present": True, "depth_cm": 13.0, "level": "WARNING"},
+        "flood": {"detected": False, "has_reference": False, "water_surface_present": False, "depth_cm": 0.0, "level": "SAFE"},
         "updated_at": time.time()
     },
     "node-sgu-04": {
