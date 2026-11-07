@@ -25,10 +25,6 @@ class ScenarioPayload(BaseModel):
     scenario: str
 
 
-class FallTestPayload(BaseModel):
-    action: str = "start"  # 'start' | 'cancel'
-
-
 class TelegramAlertPayload(BaseModel):
     incident_id: str
     node_id: Optional[str] = None

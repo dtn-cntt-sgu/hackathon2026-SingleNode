@@ -262,11 +262,6 @@ class UrbanShieldDetector:
         self.fallen_candidates: Dict[int, Dict[str, Any]] = {}
         self.next_candidate_id = 1
 
-        # Interactive 5s fall test state for live judge verification
-        self.fall_test_active = False
-        self.fall_test_start_time = 0.0
-        self.fall_test_duration = 8.0
-
         # Smoothed metrics & Privacy-by-design counters
         self.ema_flood_depth_cm = 0.0
         self.last_measured_depth_cm = 0.0
@@ -282,19 +277,6 @@ class UrbanShieldDetector:
         self.ema_flood_depth_cm = 0.0
         self.last_measured_depth_cm = 0.0
         self.last_measured_time = 0.0
-        self.fallen_candidates.clear()
-        self.fall_test_active = False
-
-    def trigger_fall_test(self, duration_sec: float = 8.5):
-        """Activates a real-time 5-second motionless fall test cycle for live judge inspection."""
-        self.fall_test_active = True
-        self.fall_test_start_time = time.time()
-        self.fall_test_duration = duration_sec
-
-    def cancel_fall_test(self):
-        """Resets the fall counter before or after 5s (simulates person standing up)."""
-        self.fall_test_active = False
-        self.fall_test_start_time = 0.0
         self.fallen_candidates.clear()
 
     def preprocess_clahe(self, frame: np.ndarray) -> Tuple[np.ndarray, bool]:
@@ -617,23 +599,7 @@ class UrbanShieldDetector:
         motionless_duration_sec = 0.0
         tracked_fall_box = None
 
-        if self.fall_test_active:
-            elapsed_test = curr_time - self.fall_test_start_time
-            if elapsed_test <= self.fall_test_duration:
-                fall_res = evaluate_fall_candidate(
-                    box_w=140,
-                    box_h=95,
-                    person_center=(320.0, 310.0),
-                    vehicle_centers=[(345.0, 315.0)],
-                    motionless_sec=elapsed_test
-                )
-                accident_detected = fall_res["detected"]
-                accident_reason = fall_res["reason"]
-                motionless_duration_sec = fall_res["motionless_sec"]
-            else:
-                self.fall_test_active = False
-
-        elif active_fallen_person is not None or len(fallen_candidates) > 0:
+        if active_fallen_person is not None or len(fallen_candidates) > 0:
             # Check if a tall upright person (standing, height >= 65px and W/H <= 0.55) appeared at candidate's spot -> person stood up!
             for cid, cand in list(fallen_candidates.items()):
                 for p in persons:

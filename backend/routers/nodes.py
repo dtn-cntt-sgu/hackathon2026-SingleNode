@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
-from schemas import ScenarioPayload, FallTestPayload
+from schemas import ScenarioPayload
 from reporting import build_compact_payload
 from database import save_incident_to_db
 import state
@@ -68,37 +68,8 @@ def set_node_scenario(node_id: str, data: ScenarioPayload):
     }
 
 
-@router.post("/api/nodes/{node_id}/fall_test")
-@router.post("/api/v1/nodes/{node_id}/fall_test")
-def control_fall_test(node_id: str, req: FallTestPayload):
-    """
-    Demonstrates the 5.0-second motionless debounce counter against false alarms.
-    """
-    if node_id not in state.NODES:
-        raise HTTPException(status_code=404, detail="Node not found")
-
-    if req.action.lower() == "cancel":
-        state.detector.cancel_fall_test()
-        if node_id in state.NODE_LATEST_METRICS:
-            state.NODE_LATEST_METRICS[node_id]["accident"] = {
-                "detected": False,
-                "reason": "Người dân đã tự đứng dậy trước 5 giây (Đã hủy bộ đếm, không báo giả)",
-                "motionless_sec": 0.0
-            }
-        return {"success": True, "status": "cancelled", "message": "Đã đặt lại bộ đếm bất động về 0s (Chống báo động giả)."}
-
-    state.detector.trigger_fall_test(duration_sec=9.0)
-    return {
-        "success": True,
-        "status": "counting",
-        "message": "Đang bắt đầu đếm thời gian nằm bất động (0.0s -> 5.0s)..."
-    }
-
-
 @router.get("/api/video_feed/{node_id}")
 @router.get("/api/v1/video_feed/{node_id}")
-@router.get("/stream/{node_id}")
-@router.get("/api/v1/stream/{node_id}")
 def video_feed(
     node_id: str,
     fps: Optional[float] = Query(None, ge=1.0, le=60.0, description="Tùy chỉnh FPS luồng phát video")

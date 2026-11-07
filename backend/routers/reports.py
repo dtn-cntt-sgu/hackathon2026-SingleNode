@@ -193,51 +193,6 @@ def get_text_report_summary(
     }
 
 
-@router.get("/api/videos/status")
-def get_videos_status():
-    """Checks availability of recorded video clips."""
-    return {k: state.resolve_real_video_path(k) is not None for k in state.REAL_VIDEOS_MAP}
-
-
-@router.get("/api/videos/catalog")
-def get_videos_catalog():
-    """Returns official video catalog of the 5 monitoring stations."""
-    return {
-        "videos": [
-            {
-                "id": "real_flood_1",
-                "name": "1. Tuyến đường chính (Triều cường)",
-                "filename": "real_flood_1.mp4",
-                "available": state.resolve_real_video_path("real_flood_1") is not None
-            },
-            {
-                "id": "real_flood_2",
-                "name": "2. Đoạn đường trũng thấp",
-                "filename": "real_flood_2.mp4",
-                "available": state.resolve_real_video_path("real_flood_2") is not None
-            },
-            {
-                "id": "real_flood_3",
-                "name": "3. Điểm ngập sâu diện rộng",
-                "filename": "real_flood_3.mp4",
-                "available": state.resolve_real_video_path("real_flood_3") is not None
-            },
-            {
-                "id": "real_flood_4",
-                "name": "4. Ngõ hẻm dân cư",
-                "filename": "real_flood_4.mp4",
-                "available": state.resolve_real_video_path("real_flood_4") is not None
-            },
-            {
-                "id": "real_accident_1",
-                "name": "5. Mặt đường trơn mưa bão",
-                "filename": "real_accident_1.mp4",
-                "available": state.resolve_real_video_path("real_accident_1") is not None
-            }
-        ]
-    }
-
-
 DETOUR_RECOMMENDATIONS = {
     "node-sgu-01": "Lộ trình vòng tránh: Đi theo trục đường Lâm Văn Bền hoặc Nguyễn Thị Thập để tránh triều cường ven sông.",
     "node-sgu-02": "Lộ trình vòng tránh: Đi theo đường Gò Ô Môi hoặc trục đại lộ Nguyễn Lương Bằng.",
@@ -257,8 +212,6 @@ def _strip_vn_accents(text: str) -> str:
 
 @router.get("/api/v1/public/route-advisory")
 @router.get("/api/public/route-advisory")
-@router.get("/api/v1/public/flood-status")
-@router.get("/api/public/flood-status")
 def get_public_route_advisory(
     query: Optional[str] = Query(default=None, description="Tìm theo tên đường hoặc trạm (vd: tran xuan soan, huynh tan phat, kenh te)"),
     vehicle: Optional[str] = Query(default=None, description="Lọc theo phương tiện: 'scooter', 'underbone', 'car'")

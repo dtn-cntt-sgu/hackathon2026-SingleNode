@@ -52,7 +52,6 @@ def get_historical_incidents(
 
 
 @router.post("/api/v1/incidents/flood")
-@router.post("/api/v1/events/flood")
 def post_flood_incident(
     payload: FloodIncidentPayload,
     x_edge_key: Optional[str] = Header(default=None)
@@ -118,7 +117,6 @@ def post_flood_incident(
 
 
 @router.post("/api/v1/incidents/accident")
-@router.post("/api/v1/events/accident")
 def post_accident_incident(
     payload: AccidentIncidentPayload,
     x_edge_key: Optional[str] = Header(default=None)
