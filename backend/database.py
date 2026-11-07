@@ -50,6 +50,9 @@ def init_db():
                 )
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_incidents_created ON incidents(created_at DESC)")
+            # Tự động dọn dẹp các sự cố cũ hơn 90 ngày để bảo vệ dung lượng đĩa (Data Retention)
+            cutoff_90d = int(time.time() - (90 * 86400))
+            cur.execute("DELETE FROM incidents WHERE created_at < ?", (cutoff_90d,))
             conn.commit()
         finally:
             conn.close()
@@ -105,23 +108,39 @@ def record_heartbeat(node_id: str, fps: float, ram_mb: float, uptime_sec: int):
 
 
 def get_db_bandwidth_stats() -> Dict[str, Any]:
-    """Calculates total bytes sent by Edge JSON payloads vs raw video stream bytes avoided."""
+    """
+    Tính toán thực chứng dung lượng mẩu tin JSON gửi đi so với dung lượng video thô.
+    Tuân thủ 100% nguyên tắc Zero-Fake-Data: Không hardcode, không ép sàn giá trị giả.
+    """
     with _db_lock:
         conn = sqlite3.connect(DB_PATH)
         try:
             cur = conn.cursor()
-            cur.execute("SELECT COUNT(*), COALESCE(SUM(payload_bytes), 0), COALESCE(AVG(payload_bytes), 84) FROM incidents")
+            cur.execute("SELECT COUNT(*), COALESCE(SUM(payload_bytes), 0) FROM incidents")
             row = cur.fetchone()
-            total_events = row[0] if row else 0
-            total_bytes = row[1] if row else 0
-            avg_bytes = int(row[2]) if row and row[2] else 84
+            total_events = int(row[0]) if row and row[0] is not None else 0
+            total_bytes = int(row[1]) if row and row[1] is not None else 0
+            avg_bytes = round(total_bytes / total_events, 1) if total_events > 0 else 0.0
 
-            # 1 hour of 640x480 28FPS video stream ~ 450 MB; Edge only sends <150B per incident
+            # CƠ SỞ TOÁN HỌC THỰC NGHIỆM TIẾT KIỆM BĂNG THÔNG:
+            # - Chuẩn camera dân dụng 640x480 H.264 @ 25-28 FPS: ~1.2 Mbps = ~150,000 Bytes/giây (~540 MB/giờ).
+            # - Baseline tiêu chuẩn 1 giờ truyền video về Cloud: 450 MB = 471,859,200 Bytes.
+            # - Khi Edge AI phân tích tại chỗ:
+            #   + Nếu 0 sự cố: Tiêu thụ 0 Bytes mạng (Tiết kiệm 100.0% băng thông).
+            #   + Nếu có sự cố: Mỗi sự cố chỉ gửi ~82 Bytes JSON (< 150 Bytes).
+            # - Công thức: % Tiết kiệm = (Dung lượng video thô 1 giờ - Tổng bytes đã gửi) / Dung lượng video thô * 100
+            baseline_raw_stream_bytes_per_hour = 450 * 1024 * 1024  # 471,859,200 Bytes
+            if total_bytes == 0:
+                saved_pct = 100.0
+            else:
+                saved_ratio = 1.0 - (total_bytes / baseline_raw_stream_bytes_per_hour)
+                saved_pct = round(max(0.0, min(100.0, saved_ratio * 100.0)), 2)
+
             return {
-                "total_events_logged": max(3, total_events),
-                "total_payload_bytes": max(252, total_bytes),
-                "avg_payload_bytes": min(148, max(72, avg_bytes)),
-                "bandwidth_saved_percent": 99.98
+                "total_events_logged": total_events,
+                "total_payload_bytes": total_bytes,
+                "avg_payload_bytes": avg_bytes,
+                "bandwidth_saved_percent": saved_pct
             }
         finally:
             conn.close()
@@ -172,4 +191,45 @@ def get_incidents_history(
             }
         finally:
             conn.close()
+
+
+def purge_old_incidents(retention_days: int = 90) -> int:
+    """
+    Tự động dọn dẹp các sự cố cũ hơn số ngày chỉ định (Data Retention Policy).
+    Chống tràn bộ nhớ đĩa cho máy tính khu phố khi chạy liên tục nhiều tháng/năm.
+    """
+    cutoff_timestamp = int(time.time() - (retention_days * 86400))
+    with _db_lock:
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM incidents WHERE created_at < ?", (cutoff_timestamp,))
+            deleted_count = cur.rowcount
+            conn.commit()
+            return max(0, deleted_count)
+        finally:
+            conn.close()
+
+
+def create_online_backup(backup_path: Optional[str] = None) -> str:
+    """
+    Tạo bản sao lưu nóng (Online Hot-Backup) của SQLite thông qua cơ chế snapshot của engine.
+    Không làm gián đoạn luồng AI đang phân tích và không làm dừng server.
+    """
+    if not backup_path:
+        backup_dir = os.path.join(os.path.dirname(DB_PATH), "backups")
+        os.makedirs(backup_dir, exist_ok=True)
+        backup_path = os.path.join(backup_dir, f"backup_{int(time.time())}.db")
+
+    with _db_lock:
+        source_conn = sqlite3.connect(DB_PATH)
+        dest_conn = sqlite3.connect(backup_path)
+        try:
+            source_conn.backup(dest_conn)
+            dest_conn.commit()
+            return backup_path
+        finally:
+            dest_conn.close()
+            source_conn.close()
+
 
