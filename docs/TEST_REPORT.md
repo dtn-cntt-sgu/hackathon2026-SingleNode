@@ -9,11 +9,11 @@
 ## ✅ 1. TỔNG HỢP KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (PYTEST QA SUITE)
 
 - **Lệnh thực thi:** `pytest tests/ -v`
-- **Tổng số bài kiểm thử (Test Cases):** `12 / 12 PASS (100%)`
+- **Tổng số bài kiểm thử (Test Cases):** `19 / 19 PASS (100%)`
 - **Các hạng mục đã kiểm chứng:**
   1. `tests/test_flood_measurement.py` (5/5 Pass): Kiểm chứng công thức hình học bánh xe máy 50cm ở cả 3 mức (<10cm An toàn, 10-20cm Chú ý, >=20cm Nguy hiểm), trường hợp biên và thuật toán cân bằng sáng thích ứng **CLAHE** ban đêm.
-  2. `tests/test_fall_detection.py` (3/3 Pass): Kiểm chứng tỷ lệ khung bao nằm ngang ($W/H > 1.15$), khoảng cách người - xe ($< 180\text{ px}$), tự động hủy báo động giả khi người dân cúi nhặt đồ hoặc dừng xe $< 5.0\text{ giây}$, và kích hoạt cảnh báo chính xác khi nằm bất động $\ge 5.0\text{ giây}$.
-  3. `tests/test_api_endpoints.py` (4/4 Pass): Kiểm chứng Minimal API `/health`, `/api/v1/incidents/flood`, `/api/v1/incidents/accident`, `/api/v1/map/segments` (GeoJSON LineString), kích thước gói tin `< 150 Bytes`, cam kết `Zero-Disk write` (0 file lưu ổ cứng) và kiểm duyệt văn phong báo cáo văn bản (Anti-hype).
+  2. `tests/test_fall_detection.py` (3/3 Pass): Kiểm chứng tỷ lệ khung bao nằm ngang ($W/H > 1.15$), khoảng cách người - xe ($< 180\text{ px}$), tự động hủy báo động giả khi người dân cúi nhặt đồ hoặc dừng xe chờ đèn đỏ $< 5.0\text{ giây}$, và kích hoạt cảnh báo chính xác khi nằm bất động $\ge 5.0\text{ giây}$.
+  3. `tests/test_api_endpoints.py` (11/11 Pass): Kiểm chứng Minimal API `/health`, `/api/v1/incidents/flood`, `/api/v1/incidents/accident`, `/api/v1/map/segments` (GeoJSON LineString), phân trang SQLite limit/offset, tra cứu lộ trình dân sinh, sao lưu nóng (Hot-Backup), chính sách dọn dẹp dữ liệu 90 ngày (Data Retention), kích thước gói tin `< 150 Bytes`, cam kết `Zero-Disk write` (0 file lưu ổ cứng) và kiểm duyệt văn phong báo cáo văn bản (Anti-hype).
 
 ---
 
