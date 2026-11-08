@@ -43,11 +43,12 @@ gcloud run deploy urbanshield-sgu \
   - *Allow unauthenticated invocations?* $\rightarrow$ Nhấn **`y`** (để công khai cho Ban Giám khảo truy cập).
 
 #### Bước 4: Nhận link kết quả và kiểm tra
-Sau khoảng 2 - 3 phút, Google Cloud Run sẽ in ra link dịch vụ:
+Google Cloud Run đã cấp phát liên kết chính thức cho dự án:
 ```text
 Service [urbanshield-sgu] revision [urbanshield-sgu-00001-xxx] has been deployed and is serving 100 percent of traffic.
-Service URL: https://urbanshield-sgu-xxxxxx-as.a.run.app
+Service URL: https://urbanshield-sgu-128758538305.asia-southeast1.run.app/
 ```
+* **Link triển khai chính thức:** 👉 **[https://urbanshield-sgu-128758538305.asia-southeast1.run.app/](https://urbanshield-sgu-128758538305.asia-southeast1.run.app/)**
 * Mở link này trên điện thoại hoặc máy tính để kiểm tra giao diện bản đồ và camera nhận diện thời gian thực.
 * In hoặc dán mã QR của link này lên slide thuyết trình để Ban Giám khảo tự quét điện thoại trải nghiệm.
 

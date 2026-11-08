@@ -21,3 +21,4 @@ Dựa vào tài liệu kịch bản UrbanShield Lite đã tải lên, hãy đón
    - [Nội dung tóm tắt hiển thị trên slide] (các gạch đầu dòng súc tích)
    - [Lời thoại người nói (Speaker Notes)]: Giữ nguyên 100% văn nói mộc mạc, tự nhiên trong tài liệu (xưng "em", gọi "Thầy Cô và các bạn").
 ```
+

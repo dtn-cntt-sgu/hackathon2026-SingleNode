@@ -11,6 +11,7 @@
 * **Tiêu đề lớn:** UrbanShield Lite
 * **Tiêu đề phụ:** Hệ thống Giám sát Ngập nước & Sự cố Ngõ hẻm bằng Edge AI trên CPU phổ thông
 * **Đội thi:** SingleNode – Trường Đại học Sài Gòn (SGU)
+* **Liên kết Live Demo Cloud Run:** `https://urbanshield-sgu-128758538305.asia-southeast1.run.app/`
 * **Thông điệp cốt lõi:** Kiến trúc suy luận tại biên (Edge Computing), tối ưu gói tin cảnh báo 81 Bytes & Triển khai một container trên Google Cloud Run với chi phí 0 đồng.
 * **Bố cục thị giác (Nền trắng tối giản):**
   * Logo chiếc khiên bảo vệ khu phố màu xanh navy `#0F172A`.
@@ -136,6 +137,6 @@
 * **Các bằng chứng khoa học minh bạch:**
   * **Bộ kiểm thử tự động 100%:** Toàn bộ **`24 / 24 bài test (Pytest & Playwright E2E)`** đều đạt PASSED, có ảnh chụp màn hình terminal thực tế lưu trong hồ sơ nghiệm thu.
   * **Thực nghiệm trên video ngập thực tế TP.HCM:** Độ trễ suy luận CPU chỉ **103.9 ms**, nhận diện ngập sâu **30 - 43 cm**, không báo động giả khi đường khô ráo (**0.0 cm**).
-  * **Triển khai Cloud đạt chuẩn tiêu chí VII:** Đã đóng gói và chạy thực tế trên **Google Cloud Run** (Singapore `asia-southeast1`, tự cấp chứng chỉ bảo mật HTTPS, chi phí 0 đồng).
+  * **Triển khai Cloud đạt chuẩn tiêu chí VII:** Đã đóng gói và chạy thực tế trên **Google Cloud Run** tại địa chỉ: `https://urbanshield-sgu-128758538305.asia-southeast1.run.app/` (Singapore `asia-southeast1`, tự cấp chứng chỉ bảo mật HTTPS, chi phí 0 đồng).
 * **Lời kết thuyết trình:**
   > "Toàn bộ các số liệu nhóm báo cáo đều được kiểm chứng minh bạch qua 24 bài kiểm thử tự động và chạy thực nghiệm trên các video ngập lụt thực tế tại Thành phố Hồ Chí Minh. Dự án đã được đóng gói hoàn chỉnh lên Google Cloud Run với chi phí 0 đồng. Nhóm em hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Quý Thầy Cô và các bạn!"

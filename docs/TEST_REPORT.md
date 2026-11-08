@@ -106,3 +106,6 @@ Thử nghiệm được chạy tự động bằng script [`backend/eval_benchma
      pytest tests/ -v
      python backend/eval_benchmark.py
      ```
+4. **Hệ thống đang hoạt động công khai trên Google Cloud Run (Tiêu chí VII - Cloud Computing):**
+   - **URL Dịch vụ chính thức:** 👉 **[https://urbanshield-sgu-128758538305.asia-southeast1.run.app/](https://urbanshield-sgu-128758538305.asia-southeast1.run.app/)**
+   - Vận hành dưới dạng Single-Container Serverless tại Region Singapore (`asia-southeast1`), tự cấp phát chứng chỉ HTTPS an toàn, đáp ứng thời gian thực cho Ban Giám khảo truy cập trực tiếp từ thiết bị di động.

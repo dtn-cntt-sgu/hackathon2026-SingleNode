@@ -1,9 +1,13 @@
 # UrbanShield Lite – Hệ Thống Giám Sát Ngập Nước & Sự Cố Ngõ Hẻm Bằng Edge AI
 
+> 🌐 **BẢN DEMO TRỰC TUYẾN TRÊN GOOGLE CLOUD RUN (OFFICIAL LIVE DEMO):**  
+> 👉 **[https://urbanshield-sgu-128758538305.asia-southeast1.run.app/](https://urbanshield-sgu-128758538305.asia-southeast1.run.app/)**  
+> *(Chứng chỉ bảo mật HTTPS của Google, Single-Container Serverless tại Region Singapore `asia-southeast1`, chi phí 0đ)*
+
 > **Dự án phát triển bởi:** **SingleNode** ([nphat-code](https://github.com/nphat-code))  
 > **Chủ đề:** AI - Kỷ nguyên vươn mình (Giải pháp An toàn đô thị & Dân sinh tiết kiệm chi phí)  
 > **Cuộc thi:** SGU Hackathon 2026 – Trường Đại học Sài Gòn  
-> **Repository:** [sgu-hackathon-2026-ai](https://github.com/nphat-code/sgu-hackathon-2026-ai)
+> **Repository:** [singlenode-urbanshield-lite](https://github.com/nphat-code/singlenode-urbanshield-lite)
 
 ---
 
