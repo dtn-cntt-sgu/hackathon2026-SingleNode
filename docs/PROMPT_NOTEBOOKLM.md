@@ -12,14 +12,15 @@ Dựa vào tài liệu kịch bản UrbanShield Lite đã tải lên, hãy đón
    - Bố cục dạng thẻ (card-based), sơ đồ khối kiến trúc (block diagram) và sơ đồ luồng quy trình (pipeline flowchart).
    - Điểm nhấn: Xanh dương (#2563EB) cho công nghệ/thị giác máy tính, Đỏ (#DC2626) cho cảnh báo nguy hiểm, Xanh lá (#16A34A) cho tối ưu băng thông 81B và Zero-Disk.
 
-2. Trọng tâm kỹ thuật & Quy tắc trình bày sơ đồ:
-   - Giữ trọn vẹn kiến trúc 3 tầng phân tách bất đồng bộ (Decoupled Threading), bảng công nghệ, và 2 luồng thuật toán (đo ngập hình học 50cm & máy trạng thái ngã xe 5s) theo đúng tài liệu nguồn.
-   - ĐẶC BIỆT RIÊNG SLIDE 3 (KIẾN TRÚC HỆ THỐNG): Trên mặt slide CHỈ HIỂN THỊ DUY NHẤT SƠ ĐỒ HÌNH KHỐI TRỰC QUAN (Box-to-box diagram với mũi tên luồng dữ liệu), TUYỆT ĐỐI KHÔNG để các gạch đầu dòng hay đoạn văn giải thích trên slide. Toàn bộ phần giải thích kỹ thuật phải nằm 100% trong phần [Lời thoại người nói (Speaker Notes)].
+2. Trọng tâm kỹ thuật & Quy tắc trình bày trực quan (Visual-First, Zero-Text-Explanation):
+   - ĐẶC BIỆT RIÊNG SLIDE 3 (KIẾN TRÚC): Trên mặt slide CHỈ HIỂN THỊ DUY NHẤT SƠ ĐỒ HÌNH KHỐI TRỰC QUAN (Box-to-box diagram với mũi tên luồng dữ liệu), TUYỆT ĐỐI KHÔNG để các gạch đầu dòng hay đoạn văn giải thích.
+   - ĐẶC BIỆT RIÊNG SLIDE 4 (CÔNG NGHỆ): Trên mặt slide CHỈ HIỂN THỊ CÁC THẺ/BADGES TÊN CÔNG NGHỆ (4 nhóm thẻ tinh gọn: Edge AI, Backend, Frontend, Cloud/Testing), TUYỆT ĐỐI KHÔNG chèn cột lý do hay đoạn văn giải thích lý do lựa chọn lên slide.
+   - TOÀN BỘ PHẦN GIẢI THÍCH KỸ THUẬT VÀ LÝ DO LỰA CHỌN: Phải nằm 100% trong phần [Lời thoại người nói (Speaker Notes)] để người thuyết trình trực tiếp trình bày bằng lời nói.
 
 3. Định dạng xuất ra cho từng slide (Slide 1 đến Slide 8):
    - [Tiêu đề & Thông điệp cốt lõi]
-   - [Gợi ý bố cục thị giác trên nền trắng] (với Slide 3 là sơ đồ khối trực quan)
-   - [Nội dung tóm tắt hiển thị trên slide] (các gạch đầu dòng súc tích; riêng Slide 3 chỉ ghi các nhãn khối của sơ đồ)
+   - [Gợi ý bố cục thị giác trên nền trắng] (Slide 3: Sơ đồ khối; Slide 4: Bố cục 4 thẻ công nghệ dạng lưới 2x2)
+   - [Nội dung tóm tắt hiển thị trên slide] (súc tích; Slide 3 chỉ ghi nhãn sơ đồ khối, Slide 4 chỉ ghi danh mục tên công nghệ dạng thẻ)
    - [Lời thoại người nói (Speaker Notes)]: Giữ nguyên 100% văn nói mộc mạc, tự nhiên trong tài liệu (xưng "em", gọi "Thầy Cô và các bạn").
 ```
 

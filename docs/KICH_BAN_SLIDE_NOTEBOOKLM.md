@@ -79,19 +79,25 @@ graph LR
 
 ---
 
-## 🛠️ SLIDE 4: CÔNG NGHỆ SỬ DỤNG & LỰA CHỌN KỸ THUẬT (TECHNOLOGY STACK)
-* **Tiêu đề:** Bảng công nghệ tinh gọn & Lý do lựa chọn kỹ thuật
-* **Bảng phân hệ công nghệ chi tiết:**
+## 🛠️ SLIDE 4: CÔNG NGHỆ SỬ DỤNG (TECHNOLOGY STACK)
+* **Tiêu đề slide:** HỆ SINH THÁI CÔNG NGHỆ TINH GỌN (TECHNOLOGY STACK)
+* **Nội dung hiển thị trên slide (100% Thẻ công nghệ / Tech Badges trực quan - Tuyệt đối không để chữ giải thích):**
 
-| Phân hệ | Công nghệ sử dụng | Lý do kỹ thuật & Ưu thế |
-| :--- | :--- | :--- |
-| **Edge AI & Computer Vision** | Ultralytics YOLOv8-nano (`imgsz=320`), OpenCV Headless | Mô hình siêu gọn 3.2M tham số, suy luận CPU đạt ~32ms; thuật toán Sobel tìm mép nước và CLAHE bù sáng ban đêm |
-| **Backend API Gateway** | Python 3.10, FastAPI APIRouter, Uvicorn ASGI, SQLite WAL | Kiến trúc Clean Architecture phân tách module; SQLite WAL chống xung đột ghi đồng thời; thư viện `psutil` đo RAM thực tế |
-| **Frontend & WebGIS** | React 18, Vite, TailwindCSS, Leaflet WebGIS | Giao diện tải dưới 1 giây; số hóa tuyến đường ngập bằng định dạng chuẩn quốc tế GeoJSON LineString đổi màu trực quan |
-| **Cloud & DevOps** | Google Cloud Run, Docker, GitHub Actions, Playwright E2E, Pytest | Triển khai 1 container duy nhất; Serverless tự co giãn từ 0 instance, miễn phí 100%; bộ test tự động 24/24 bài đạt chuẩn |
+```text
+┌─────────────────────────────────────────┐  ┌─────────────────────────────────────────┐
+│ 🧠 EDGE AI & COMPUTER VISION            │  │ ⚙️ BACKEND & DATABASE                   │
+│ • Ultralytics YOLOv8-nano (3.2M params) │  │ • Python 3.10 & FastAPI (Clean Arch)    │
+│ • OpenCV Headless (Sobel & CLAHE)       │  │ • SQLite (WAL Mode, Data Retention 90d) │
+└─────────────────────────────────────────┘  └─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐  ┌─────────────────────────────────────────┐
+│ 🗺️ FRONTEND & WEBGIS                    │  │ ☁️ CLOUD, CI/CD & TESTING               │
+│ • React 18 & Vite & TailwindCSS         │  │ • Google Cloud Run (Serverless 0-cost)  │
+│ • Leaflet WebGIS (GeoJSON LineString)   │  │ • Docker, Playwright E2E, Pytest (24/24)│
+└─────────────────────────────────────────┘  └─────────────────────────────────────────┘
+```
 
-* **Lời thoại người nói (Speaker Notes):**
-  > "Về mặt công nghệ, nhóm em chủ động chọn mô hình YOLOv8-nano nhỏ gọn nhất chỉ 3.2 triệu tham số để chạy nhẹ nhàng trên CPU. Kết hợp với các thuật toán thị giác máy tính truyền thống như đạo hàm Sobel tìm mép nước và cân bằng sáng thích ứng CLAHE ban đêm. Ở phía giao diện, nhóm dùng React và bản đồ số Leaflet để vẽ trực tiếp các tuyến đường ngõ hẻm theo định dạng chuẩn GeoJSON."
+* **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích lý do lựa chọn kỹ thuật):**
+  > "Dạ thưa Thầy Cô và các bạn, trên slide là 4 trụ cột công nghệ mà nhóm đã chọn lọc kỹ lưỡng. Về AI, nhóm chủ động chọn mô hình YOLOv8-nano siêu gọn chỉ 3.2 triệu tham số để chạy trực tiếp trên CPU phổ thông mà vẫn đạt tốc độ xử lý nhanh dưới 50 mili-giây, kết hợp OpenCV để tìm mép nước và cân bằng sáng ban đêm. Phía backend, nhóm dùng Python FastAPI kết hợp SQLite chế độ WAL để ghi nhật ký nhanh mà không tốn công cài đặt các hệ quản trị nặng nề. Giao diện được xây dựng bằng React và bản đồ số Leaflet để hiển thị trực quan các tuyến đường ngõ hẻm theo chuẩn quốc tế GeoJSON. Cuối cùng, toàn bộ hệ thống được đóng gói trong một container Docker duy nhất triển khai trên Google Cloud Run với chi phí 0 đồng, đi kèm bộ kiểm thử tự động 24 bài test bảo đảm vận hành chuẩn xác ạ."
 
 ---
 
