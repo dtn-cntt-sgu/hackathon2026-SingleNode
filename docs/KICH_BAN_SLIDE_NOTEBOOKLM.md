@@ -38,22 +38,44 @@
 ---
 
 ## 🏛️ SLIDE 3: KIẾN TRÚC TỔNG THỂ HỆ THỐNG (SYSTEM ARCHITECTURE BLUEPRINT)
-* **Tiêu đề:** Kiến trúc 3 tầng phân tách bất đồng bộ (Decoupled Edge-Cloud Architecture)
-* **Sơ đồ kiến trúc chi tiết (3 Tầng):**
-  * **Tầng 1 - Thu nhận tại biên (Edge Ingestion):**
-    * Camera an ninh / Webcam USB dân sinh $\rightarrow$ Luồng RTSP/MJPEG 28.5 FPS nội bộ.
-  * **Tầng 2 - Nhân suy luận Edge đa luồng (Decoupled Threading Core):**
-    * **Luồng hiển thị video (Stream Loop):** Duy trì 28.5 FPS mượt mà cho cán bộ trực ban theo dõi trực tiếp.
-    * **Hàng đợi AI bất đồng bộ (ThreadPoolExecutor):** Đẩy từng frame vào hàng đợi phân tích độc lập, hoàn toàn không làm giật lag hay tụt FPS luồng camera.
-    * **Bộ nhớ đệm xoay vòng trên RAM (RAM Ring-Buffer):** Xử lý ma trận ảnh trên RAM và giải phóng tức thì (Zero-Disk write).
-    * **Cơ sở dữ liệu nhúng SQLite (WAL Mode):** Ghi nhật ký cực nhanh, phân trang limit/offset, tự động dọn dẹp sau 90 ngày (Data Retention).
-  * **Tầng 3 - Đám mây & Điều phối cảnh báo (Cloud & Alerting):**
-    * Gói tin JSON nén 81 Bytes $\rightarrow$ Bot Telegram tự động gửi tin nhắn báo động kèm tọa độ GPS.
-    * Cổng kết nối WebGIS bản đồ số trên Google Cloud Run (Single-Container Serverless).
-* **Bố cục thị giác:**
-  * Sơ đồ khối kiến trúc 3 tầng từ trái qua phải (Tầng thu nhận $\rightarrow$ Tầng Edge AI Core đa luồng $\rightarrow$ Tầng Cloud Alert).
-* **Lời thoại người nói (Speaker Notes):**
-  > "Trên slide là sơ đồ kiến trúc tổng thể của hệ thống. Nhóm em thiết kế tách biệt hoàn toàn giữa luồng phát video và luồng trí tuệ nhân tạo: máy tính khu phố vừa hiển thị video 28.5 khung hình một giây cho bảo vệ trực ban theo dõi mượt mà, vừa đưa các khung hình vào hàng đợi AI để phân tích ngầm mà không bị đứng hình. Toàn bộ hình ảnh chỉ xử lý trên bộ nhớ RAM rồi xóa ngay, không ghi đè một tệp video nào xuống ổ cứng."
+* **Tiêu đề slide:** KIẾN TRÚC 3 TẦNG PHÂN TÁCH BẤT ĐỒNG BỘ (DECOUPLED EDGE-CLOUD)
+* **Nội dung hiển thị trên slide (100% Sơ đồ hình khối trực quan - Tuyệt đối không để chữ giải thích):**
+
+```mermaid
+graph LR
+    subgraph T1["1. THU NHẬN BIÊN"]
+        CAM["Camera RTSP / USB<br/>(28.5 FPS nội bộ)"]
+    end
+
+    subgraph T2["2. MÁY TÍNH BIÊN ĐA LUỒNG (EDGE CORE)"]
+        direction TB
+        DISP["Luồng Video Trực Tiếp<br/>(Stream Loop 28.5 FPS)"]
+        QUEUE["Hàng Đợi AI Bất Đồng Bộ<br/>(ThreadPoolExecutor)"]
+        RAM["Bộ Nhớ Tạm RAM Ring-Buffer<br/>(Zero-Disk Write)"]
+        DB[("SQLite WAL Mode<br/>(Lưu vết sự cố 90 ngày)")]
+        
+        CAM --> DISP
+        CAM --> QUEUE
+        QUEUE --> RAM
+        RAM --> DB
+    end
+
+    subgraph T3["3. ĐÁM MÂY & ĐIỀU PHỐI"]
+        direction TB
+        TELE["Bot Telegram Cảnh Báo<br/>(Dân quân & Cư dân)"]
+        GIS["Bản Đồ Số WebGIS<br/>(Google Cloud Run)"]
+        
+        RAM -.->|"Chỉ gửi 81 Bytes<br/>khi có sự cố"| TELE
+        RAM -.->|"Chỉ gửi 81 Bytes<br/>khi có sự cố"| GIS
+    end
+
+    style T1 fill:#EFF6FF,stroke:#3B82F6,stroke-width:2px
+    style T2 fill:#F8FAFC,stroke:#64748B,stroke-width:2px
+    style T3 fill:#F0FDF4,stroke:#16A34A,stroke-width:2px
+```
+
+* **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích chi tiết sơ đồ):**
+  > "Dạ thưa Thầy Cô và các bạn, trên slide là sơ đồ kiến trúc tổng thể của hệ thống, được thiết kế tách biệt 3 tầng rõ ràng. Đầu tiên, camera ở ngõ hẻm truyền video về máy tính khu phố. Tại đây, máy tính chạy 2 luồng độc lập: một luồng giữ hình ảnh 28.5 khung hình một giây cho cán bộ trực ban theo dõi mượt mà, luồng thứ hai đẩy vào hàng đợi AI bất đồng bộ để phân tích ngầm mà không làm đứng hình camera. Toàn bộ hình ảnh chỉ xử lý trên bộ nhớ RAM rồi tự hủy ngay lập tức, không lưu một video nào xuống ổ cứng để bảo vệ sự riêng tư của bà con. Và chỉ khi có sự cố, máy tính tại ngõ hẻm mới bắn một mẩu tin nhỏ 81 Bytes lên máy chủ đám mây và Telegram để dân quân xuất phát ứng cứu kịp thời ạ."
 
 ---
 
