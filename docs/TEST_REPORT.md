@@ -42,49 +42,13 @@ Hệ thống kiểm thử tự động bằng trình duyệt thật **Playwright
 
 ## ✅ 2. TỔNG HỢP KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (PYTEST + PLAYWRIGHT QA SUITE)
 
-- **Lệnh thực thi chuẩn:** `.\backend\venv\Scripts\pytest.exe tests/ -v` (hoặc chạy file script `.\run_tests.ps1`)
+- **Lệnh thực thi chuẩn:** `.\backend\venv\Scripts\pytest.exe tests/ -v` (hoặc chạy script một chạm `.\run_tests.ps1`)
 - **Tổng số bài kiểm thử (Test Cases):** **`24 / 24 PASS (100%)`**
 - **Thời gian thực thi:** `67.46 giây` trên CPU phổ thông.
-- **Tệp nhật ký đầy đủ:** [`docs/pytest_execution_log.txt`](pytest_execution_log.txt)
 
 ### 🖥️ Ảnh chụp màn hình thực tế cửa sổ lệnh PowerShell (Terminal Execution Evidence):
-> Minh chứng thực tế từ môi trường máy tính người dùng chạy lệnh kiểm thử `pytest tests/ -v` hoàn tất 24/24 bài test với trạng thái toàn bộ xanh (PASSED):
+> Minh chứng thực tế từ môi trường máy tính chạy lệnh kiểm thử `pytest tests/ -v` hoàn tất 24/24 bài test với trạng thái toàn bộ xanh (PASSED):
 ![Minh chứng thực thi lệnh Pytest 24/24 PASS](screenshots/pytest_terminal_evidence.png)
-
-```text
-============================= test session starts =============================
-platform win32 -- Python 3.10.11, pytest-9.2.0, pluggy-1.7.0
-rootdir: C:\Competition\singlenode-urbanshield-lite
-plugins: anyio-4.16.0, playwright-0.10.0
-collected 24 items
-
-tests/test_api_endpoints.py::test_health_endpoint_and_privacy_zero_disk PASSED [  4%]
-tests/test_api_endpoints.py::test_flood_incident_minimal_api_under_150_bytes PASSED [  8%]
-tests/test_api_endpoints.py::test_accident_incident_debounce_and_trigger PASSED [ 12%]
-tests/test_api_endpoints.py::test_geojson_map_segments PASSED            [ 16%]
-tests/test_api_endpoints.py::test_text_reports_anti_hype_compliance PASSED [ 20%]
-tests/test_api_endpoints.py::test_process_time_and_clean_arch_headers PASSED [ 25%]
-tests/test_api_endpoints.py::test_historical_incidents_pagination_from_sqlite PASSED [ 29%]
-tests/test_api_endpoints.py::test_consistent_v1_api_versioning PASSED    [ 33%]
-tests/test_api_endpoints.py::test_public_route_advisory_for_citizens PASSED [ 37%]
-tests/test_api_endpoints.py::test_public_route_advisory_filter_by_query_and_vehicle PASSED [ 41%]
-tests/test_api_endpoints.py::test_sqlite_data_retention_and_hot_backup PASSED [ 45%]
-tests/test_fall_detection.py::test_upright_person_riding_normally PASSED [ 50%]
-tests/test_fall_detection.py::test_person_bending_to_pick_up_item_under_5_seconds PASSED [ 54%]
-tests/test_fall_detection.py::test_person_fallen_motionless_over_5_seconds PASSED [ 58%]
-tests/test_flood_measurement.py::test_wheel_flood_depth_safe_level PASSED [ 62%]
-tests/test_flood_measurement.py::test_wheel_flood_depth_warning_level PASSED [ 66%]
-tests/test_flood_measurement.py::test_wheel_flood_depth_danger_half_wheel PASSED [ 70%]
-tests/test_flood_measurement.py::test_wheel_flood_depth_edge_cases PASSED [ 75%]
-tests/test_flood_measurement.py::test_clahe_night_and_day_preprocessing PASSED [ 79%]
-tests/test_playwright_e2e.py::test_e2e_dashboard_and_flood_tram01 PASSED [ 83%]
-tests/test_playwright_e2e.py::test_e2e_station_switch_dry_road_tram03 PASSED [ 87%]
-tests/test_playwright_e2e.py::test_e2e_station_switch_accident_tram05 PASSED [ 91%]
-tests/test_playwright_e2e.py::test_e2e_shift_report_modal PASSED         [ 95%]
-tests/test_playwright_e2e.py::test_e2e_webgis_map_component PASSED       [100%]
-
-================== 24 passed, 1 warning in 67.46s (0:01:07) ===================
-```
 
 ### 📋 Chi tiết các hạng mục kiểm thử:
 1. **Kiểm thử đo lường ngập lụt (`test_flood_measurement.py` - 5/5 Pass):**
