@@ -410,19 +410,19 @@ class UrbanShieldDetector:
         lap_var = float(cv2.Laplacian(gray_lower, cv2.CV_64F).var())
 
         # Robust Dry Road Classification vs Flood Water Surface:
-        # On 640x360 downscaled frames, a dry daylight road exhibits sharp asphalt texture and high-frequency edges
-        # (lap_var > 650.0), normal daylight luminance (val_mean > 70.0), and low saturation (sat_mean < 75.0).
-        # Muddy water surfaces diffuse textures and have low lap_var (<= 450.0).
-        is_dry_road = (lap_var > 650.0 and val_mean > 70.0 and sat_mean < 75.0)
+        # High-frequency dry asphalt texture has high Laplacian variance (lap_var > 3800.0),
+        # normal daylight luminance (val_mean > 70.0), and low saturation (sat_mean < 75.0).
+        # Flood water surfaces have low/medium Laplacian variance (lap_var <= 3000.0).
+        is_dry_road = (lap_var > 3800.0 and val_mean > 70.0 and sat_mean < 75.0)
         is_water_surface = (not is_dry_road) and (val_mean > 15.0)
 
         # Filter upright motorcycles/bicycles in the measurable road corridor (width >= 20, height >= 26)
-        # Upright running motorcycles with riders/raincoats have aspect ratio <= 1.35; fallen bikes (AR >= 1.65) are NEVER flood references!
+        # Upright running motorcycles have aspect ratio <= 1.85; active roadway corridor 0.05 to 0.90 w.
         valid_motorcycles = [
             m for m in motorcycles
             if m["width"] >= 20 and m["height"] >= 26
-            and m["aspect_ratio"] <= 1.35
-            and (0.05 * w <= m["center"][0] <= 0.95 * w)
+            and m["aspect_ratio"] <= 1.85
+            and (0.05 * w <= m["center"][0] <= 0.90 * w)
         ]
         valid_motorcycles.sort(key=lambda x: x["box"][3], reverse=True)
 
@@ -494,18 +494,10 @@ class UrbanShieldDetector:
                 else:
                     grad_ratio = 0.55
 
-                # Robust geometric waterline mapping:
-                # 1. When waterline peak is near bottom of wheel (grad_ratio >= 0.48) or clear rain puddle (sat < 40):
-                #    Wheel is fully grounded, water is shallow surface puddle (< 10cm, SAFE).
-                # 2. When waterline is high on wheel (grad_ratio <= 0.30) or turbid flood (sat >= 50, lap > 1500):
-                #    Wheel is heavily submerged (> 27cm, DANGER).
-                # 3. Otherwise: moderate flood near exhaust (15 - 22cm, WARNING/DANGER).
-                if grad_ratio >= 0.48 or (sat_mean < 40.0 and grad_ratio >= 0.42):
-                    visible_ratio = np.clip(grad_ratio * 1.5, 0.85, 0.95)
-                elif grad_ratio <= 0.30 or (sat_mean >= 50.0 and lap_var > 1500.0):
-                    visible_ratio = np.clip(grad_ratio, 0.36, 0.46)
-                else:
-                    visible_ratio = np.clip(grad_ratio, 0.54, 0.66)
+                # Direct empirical geometric waterline mapping from Sobel gradient:
+                # The waterline is the transition row where water contacts the tire/body.
+                # visible_ratio is the proportion of wheel above water (clamped between 0.15 and 0.90).
+                visible_ratio = np.clip(grad_ratio, 0.15, 0.90)
 
                 visible_wheel_px = wheel_zone_h * float(visible_ratio)
                 depth_est, _ = estimate_wheel_flood_depth(visible_wheel_px, wheel_zone_h, ref_diam_cm)
@@ -581,17 +573,6 @@ class UrbanShieldDetector:
             last_ref = self.node_last_ref[node_id].copy()
             last_ref["depth_cm"] = final_depth_cm
             primary_ref_info = last_ref
-
-            submerged_ratio = min(1.0, max(0.0, final_depth_cm / 50.0)) if flood_detected else 0.0
-            waterline_y = int(w_bot - (submerged_ratio * wh))
-
-            primary_ref_info = {
-                "box": [px1, py1, px2, py2],
-                "wheel_box": [w_left, w_top, w_right, w_bot],
-                "waterline_y": waterline_y,
-                "depth_cm": final_depth_cm,
-                "class": primary_ref.get("class", "motorcycle")
-            }
 
         # ----------------------------------------------------
         # 2. AUTOMATIC FALL & ROAD HAZARD DETECTION (5.0s TRACKER)
