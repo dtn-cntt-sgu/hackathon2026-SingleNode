@@ -54,3 +54,4 @@ HÃY BẮT ĐẦU TẠO CHI TIẾT 8 SLIDE NGAY BÂY GIỜ THEO CẤU TRÚC:
 
 * **Tạo bảng Hỏi - Đáp phản biện cho Ban Giám khảo (Q&A Cheat-sheet):**  
   > *"Dựa vào tài liệu nguồn, hãy liệt kê 5 câu hỏi phản biện hóc búa nhất mà Ban Giám khảo có thể chất vấn nhóm về: tính chính xác khi không có xe máy, góc nghiêng camera, quyền riêng tư người dân, và cách trả lời ngắn gọn, thuyết phục trong 30 giây."*
+

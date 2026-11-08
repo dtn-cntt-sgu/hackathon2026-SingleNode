@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UrbanShield Lite — Slide Thuyết Trình Hackathon SGU 2026</title>
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-card: #f8fafc;
+      --border-card: #e2e8f0;
+      --text-title: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --accent-blue: #2563eb;
+      --accent-red: #dc2626;
+      --accent-green: #16a34a;
+      
+      --slide-padding: clamp(1.2rem, 3.5vw, 3.5rem);
+      --title-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      --h2-size: clamp(1.2rem, 2.4vw, 1.7rem);
+      --body-size: clamp(0.85rem, 1.25vw, 1.05rem);
+      --small-size: clamp(0.75rem, 1vw, 0.9rem);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-body);
+    }
+
+    /* Container holding all slides */
+    .slides-container {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      position: relative;
+    }
+
+    .slide {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: scale(0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: var(--slide-padding);
+      overflow: hidden;
+      background: var(--bg-primary);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+      z-index: 2;
+    }
+
+    /* Header */
+    .slide-header {
+      margin-bottom: clamp(0.5rem, 1.5vh, 1.2rem);
+    }
+    .kicker {
+      font-size: var(--small-size);
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+    .slide-title {
+      font-size: var(--title-size);
+      font-weight: 800;
+      color: var(--text-title);
+      line-height: 1.2;
+    }
+
+    /* Body Layouts */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 80vh;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1rem, 2vw, 2rem);
+      height: 100%;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      height: 100%;
+      align-items: stretch;
+    }
+
+    /* White Minimalist Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-card);
+      border-radius: 14px;
+      padding: clamp(1rem, 2vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    }
+    .card-title {
+      font-size: var(--h2-size);
+      font-weight: 700;
+      color: var(--text-title);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title.blue { color: var(--accent-blue); }
+    .card-title.red { color: var(--accent-red); }
+    .card-title.green { color: var(--accent-green); }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.4rem, 1.2vh, 0.8rem);
+    }
+    .card li {
+      font-size: var(--body-size);
+      line-height: 1.45;
+      color: var(--text-body);
+      position: relative;
+      padding-left: 18px;
+    }
+    .card li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-blue);
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .card li strong {
+      color: var(--text-title);
+    }
+
+    /* Cover Slide */
+    .cover-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100%;
+      max-width: 900px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: var(--accent-blue);
+      font-weight: 700;
+      font-size: var(--small-size);
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      color: var(--accent-blue);
+      letter-spacing: -0.5px;
+      margin-bottom: 0.8rem;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+      color: var(--text-title);
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+    }
+    .hero-meta {
+      font-size: var(--body-size);
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* Bottom Status & Controls */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border-card);
+      font-size: var(--small-size);
+      color: var(--text-muted);
+    }
+
+    /* Floating Navigation Controls */
+    .nav-controls {
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-card);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      color: var(--text-title);
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover {
+      background: var(--bg-card);
+    }
+    .page-indicator {
+      font-size: var(--small-size);
+      font-weight: 700;
+      color: var(--text-title);
+      padding: 0 4px;
+    }
+
+    /* Speaker Notes Drawer (Press 'N') */
+    .speaker-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1.2rem var(--slide-padding);
+      font-size: var(--body-size);
+      line-height: 1.5;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 200;
+      border-top: 3px solid var(--accent-blue);
+    }
+    .speaker-drawer.open {
+      transform: translateY(0);
+    }
+    .speaker-drawer .header-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #93c5fd;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slides-container">
+
+    <!-- SLIDE 1 -->
+    <section class="slide active" data-notes="Chào Thầy Cô và các bạn, em là Phát đến từ đội SingleNode. Hôm nay nhóm em xin giới thiệu dự án UrbanShield Lite — giải pháp ứng dụng trí tuệ nhân tạo tại chỗ trên các máy tính văn phòng phổ thông, nhằm bảo vệ bà con trong những con đường nhỏ và ngõ hẻm hay bị ngập nước và tai nạn tại TP.HCM.">
+      <div class="slide-body">
+        <div class="cover-content">
+          <span class="hero-badge">SGU HACKATHON 2026 — ĐỘI SINGLENODE</span>
+          <h1 class="hero-title">URBANSHIELD LITE</h1>
+          <p class="hero-subtitle">Giám sát ngập nước & sự cố ngõ hẻm bằng Edge AI trên CPU phổ thông</p>
+          <p class="hero-meta">Trường Đại học Sài Gòn (SGU) • Khoa Công nghệ Thông tin</p>
+          <div class="grid-3" style="width: 100%; height: auto;">
+            <div class="card">
+              <div class="card-title blue">0 Đồng Thiết Bị</div>
+              <p>Tận dụng 100% camera an ninh và PC văn phòng có sẵn trong khu phố.</p>
+            </div>
+            <div class="card">
+              <div class="card-title green">82 Bytes Gói Tin</div>
+              <p>Tiết kiệm 99.98% băng thông mạng dân sinh so với kéo luồng video.</p>
+            </div>
+            <div class="card">
+              <div class="card-title red">100% Zero-Disk</div>
+              <p>Giải mã và phân tích trên RAM, tuyệt đối bảo vệ quyền riêng tư người dân.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>Nhấn ◄ ► hoặc Phím Cách để chuyển trang • Phím [F] toàn màn hình • Phím [N] lời thoại</span>
+        <span>Slide 1 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide" data-notes="Thực tế mỗi khi mùa mưa đến, nỗi khổ lớn nhất của bà con lao động là đi làm về gặp hẻm ngập nước khiến xe máy chết máy, hoặc trượt ngã trong hẻm vắng mà không ai hay biết. Nhưng để lắp đặt hệ thống cảnh báo thì gặp rào cản lớn: mua camera chuyên dụng thì quá đắt đỏ, cảm biến dưới cống thì dễ bị rác nghẹt, còn nếu dùng camera thường kéo video liên tục về máy chủ thì lại làm nghẽn toàn bộ đường truyền mạng của khu phố.">
+      <div class="slide-header">
+        <div class="kicker">THỰC TRẠNG & NỖI ĐAU DÂN SINH</div>
+        <h2 class="slide-title">Ngõ Hẻm Mùa Mưa Bão & Rào Cản Hạ Tầng Địa Phương</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title red">Nỗi đau dân sinh thực tế</div>
+            <ul>
+              <li><strong>Xe máy chết máy dắt bộ:</strong> Triều cường dâng cao 20–30cm, bà con đi làm về không biết trước, hàng loạt xe chết máy giữa đêm mưa.</li>
+              <li><strong>Tai nạn trơn trượt khó phát hiện:</strong> Mặt đường ngập che mất ổ gà làm trượt ngã xe trong hẻm vắng, không được phát hiện kịp thời để giúp đỡ.</li>
+              <li><strong>Lực lượng cơ sở mỏng:</strong> Dân quân và tổ dân phố không thể túc trực đi tuần hàng ngàn ngõ hẻm cùng lúc khi bão đổ bộ.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">3 Rào cản công nghệ ở địa phương</div>
+            <ul>
+              <li><strong>Camera chuyên dụng đo ngập:</strong> Giá thành quá đắt đỏ, ngân sách khu phố không thể mua sắm đại trà.</li>
+              <li><strong>Cảm biến siêu âm dưới cống:</strong> Nhanh chóng bị rác thải, bùn đất bám nghẹt, dẫn đến báo số liệu sai.</li>
+              <li><strong>Hạ tầng mạng dân sinh yếu:</strong> Kéo luồng video liên tục về máy chủ trung tâm sẽ làm nghẽn toàn bộ đường truyền mạng trong khu phố.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 2 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide" data-notes="Để giải quyết triệt để bài toán này, nhóm em chọn cách tiếp cận: Phân tích tại chỗ ngay tại máy tính khu phố. Chúng em tận dụng luôn những camera an ninh đã có sẵn, gắn vào máy tính văn phòng phổ thông không cần card màn hình. Quy trình rất đơn giản: camera truyền hình ảnh về máy tính, máy tính tự phân tích mức nước và tai nạn, và chỉ khi có sự cố thì mới gửi một mẩu tin cảnh báo đi.">
+      <div class="slide-header">
+        <div class="kicker">GIẢI PHÁP KỸ THUẬT TẠI BIÊN</div>
+        <h2 class="slide-title">Biến Camera Sẵn Có Thành Trạm Cảnh Báo Thông Minh (Edge AI)</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title blue">1. THU NHẬN HÌNH ẢNH</div>
+            <ul>
+              <li>Tận dụng camera an ninh sẵn có trong hẻm.</li>
+              <li>Truyền luồng video qua mạng nội bộ khu phố.</li>
+              <li>Không tốn chi phí mua camera mới (<strong>0 đồng</strong>).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title blue">2. PHÂN TÍCH TẠI CHỖ (CPU)</div>
+            <ul>
+              <li>Chạy trên CPU máy tính văn phòng phổ thông.</li>
+              <li>Mô hình YOLOv8-nano gọn nhẹ + Toán hình học.</li>
+              <li>Đo mực nước ngập & phát hiện ngã xe bất động.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title green">3. CẢNH BÁO TỨC THÌ</div>
+            <ul>
+              <li>Chỉ gửi mẩu tin JSON siêu nhẹ <strong>82 Bytes</strong>.</li>
+              <li>Tự động xuất Text Report gửi Telegram cứu hộ.</li>
+              <li>Bản đồ số WebGIS đổi màu theo thời gian thực.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 3 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide" data-notes="Về kỹ thuật, nhóm em không dùng cảm biến dưới cống mà dùng chính chiếc xe máy làm thước đo. Đường kính bánh xe máy phổ thông ở Việt Nam luôn là 50cm. Máy tính sẽ dò mép nước cắt ngang bánh xe để tính ra độ sâu ngập chính xác từng centimet. Còn với sự cố ngã xe, hệ thống có bộ đếm bất động 5 giây: nếu người dân tự đứng dậy được hoặc dừng xe chờ đèn đỏ thì máy tự hủy theo dõi; chỉ khi nạn nhân nằm im quá 5 giây thì chuông báo động cứu hộ mới reo.">
+      <div class="slide-header">
+        <div class="kicker">THUẬT TOÁN THỊ GIÁC MÁY TÍNH</div>
+        <h2 class="slide-title">Hai Thuật Toán Cốt Lõi: Chính Xác & Chống Báo Động Giả</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title blue">1. Đo ngập hình học qua bánh xe máy 50cm</div>
+            <ul>
+              <li><strong>Vật chuẩn bất biến:</strong> Bánh xe máy phổ thông tại Việt Nam luôn có đường kính chuẩn xác là 50 cm.</li>
+              <li><strong>Đạo hàm Sobel mép nước:</strong> Lấy phần thân xe trên cạn làm mốc, quét tìm đường viền cắt của mặt nước trên lốp xe để tính ra độ sâu ngập.</li>
+              <li><strong>Thích ứng ban đêm (CLAHE):</strong> Tự động cân bằng sáng thích ứng khi trời mưa đêm hoặc ánh đèn hắt bóng nước.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title red">2. Bộ đếm bất động 5 giây chống báo nhầm</div>
+            <ul>
+              <li><strong>Lọc người dừng xe:</strong> Người ngồi trên xe máy dựng đứng dừng chờ đèn đỏ sẽ tự động bị loại trừ nhờ bộ lọc không gian (Seated-Rider Filter).</li>
+              <li><strong>Loại bỏ cúi nhặt đồ:</strong> Người đi bộ cúi xuống nhặt đồ hoặc dắt xe rồi đứng dậy trước 5 giây sẽ tự hủy bộ đếm.</li>
+              <li><strong>Chốt cảnh báo nguy hiểm:</strong> Chỉ kích hoạt cảnh báo cứu hộ khi nạn nhân hoặc xe nằm bất động liên tục trên 5.0 giây.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 4 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide" data-notes="Thay vì kéo video liên tục về máy chủ làm tốn khoảng 450MB mỗi giờ và nghẽn mạng hẻm, máy tính của chúng em xử lý xong thì chỉ gửi đi một mẩu tin dữ liệu vỏn vẹn 82 Bytes. Nhờ mẩu tin gọn nhẹ này, hệ thống tiết kiệm hơn 99.98% băng thông mạng, mưa bão sóng yếu vẫn gửi tin tốt. Mẩu tin này tự động chuyển thành bản tin Telegram gửi thẳng cho các chú dân quân đang đi tuần ngoài mưa.">
+      <div class="slide-header">
+        <div class="kicker">ĐỘT PHÁ BĂNG THÔNG MẠNG</div>
+        <h2 class="slide-title">Mẩu Tin 82 Bytes (< 150B) & Báo Cáo Văn Bản Mộc Mạc</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title green">Tiết kiệm 99.98% băng thông mạng</div>
+            <ul>
+              <li><strong>Kéo video về server:</strong> Tiêu tốn ~450 MB mỗi giờ / camera, làm nghẽn toàn bộ đường truyền internet trong hẻm.</li>
+              <li><strong>UrbanShield Lite tại chỗ:</strong> Bình thường tiêu thụ <strong>0 Byte</strong> mạng. Chỉ gửi mẩu tin khi phát hiện sự cố.</li>
+              <li><strong>Kích thước mẩu tin:</strong> Đúng <strong>82 Bytes</strong> (gói tin JSON Minimal API), chưa bằng một tin nhắn SMS.</li>
+              <li><strong>Chống chọi giông bão:</strong> Sóng di động 2G/3G chập chờn khi mưa to gió lớn vẫn gửi tin cứu hộ trót lọt.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title blue">Bản tin Telegram cho lực lượng cứu hộ</div>
+            <ul>
+              <li><strong>Mẫu A - Cảnh báo tức thời:</strong> Tự động bung mẩu tin 82 Bytes thành tin nhắn Telegram gửi dân quân chỉ sau 1.5 giây.</li>
+              <li><strong>Thông tin thực chiến:</strong> Vị trí ngõ hẻm cụ thể, tọa độ GPS và hướng dẫn phân luồng xe máy tránh ngập sâu.</li>
+              <li><strong>Mẫu B - Bản tin ca trực:</strong> Báo cáo tổng hợp số đợt ngập triều, đỉnh triều và sự cố ngã xe trong ca trực cho tổ trưởng dân phố.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 5 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide" data-notes="Hệ thống chạy rất nhẹ nhàng trên CPU phổ thông với tốc độ 28.5 khung hình/giây và chỉ tốn hơn 400MB RAM. Đặc biệt, để bảo vệ quyền riêng tư cho người dân trong ngõ hẻm, toàn bộ video chỉ giải mã trên bộ nhớ RAM rồi tự giải phóng ngay sau đó. Hệ thống cam kết không lưu bất kỳ hình ảnh hay video nào xuống ổ cứng.">
+      <div class="slide-header">
+        <div class="kicker">KIẾN TRÚC HỆ THỐNG & BẢO MẬT</div>
+        <h2 class="slide-title">Vận Hành Bền Bỉ Trên CPU & Cam Kết Zero-Disk</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">TỐI ƯU HIỆU NĂNG CPU</div>
+            <ul>
+              <li>Tốc độ xử lý: <strong>28.5 FPS</strong> mượt mà.</li>
+              <li>Độ trễ suy luận: <strong>25.1 ms</strong> / khung hình.</li>
+              <li>Mức tiêu thụ RAM: <strong>~412 MB</strong> ổn định.</li>
+              <li>Không cần card đồ họa GPU đắt đỏ.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title red">QUYỀN RIÊNG TƯ (ZERO-DISK)</div>
+            <ul>
+              <li>Khung hình video chỉ nạp vào bộ nhớ RAM.</li>
+              <li>Tự động giải phóng ngay sau khi AI phân tích.</li>
+              <li><strong>0 file ảnh, 0 file video</strong> lưu ổ đĩa.</li>
+              <li>Bảo vệ triệt để quyền riêng tư người dân.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title blue">SQLITE CHẾ ĐỘ WAL</div>
+            <ul>
+              <li>Ghi sự cố và đọc API phân trang song song.</li>
+              <li>Lưu hàng đợi ngoại tuyến khi rớt mạng.</li>
+              <li>Tự dọn dẹp sự cố cũ sau 90 ngày.</li>
+              <li>Chống tràn bộ nhớ ổ đĩa máy tính.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 6 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide" data-notes="Nhóm em tuân thủ nghiêm ngặt tính liêm chính học thuật: toàn bộ 19 bài kiểm thử tự động đều vượt qua thành công. Số liệu đo lường đều được trích xuất từ các video ngập nước thực tế tại TP.HCM. Ở những tình huống không có xe máy chạy qua làm mốc đo, hệ thống thẳng thắn báo không đo được chứ tuyệt đối không dùng dữ liệu giả để làm đẹp kết quả.">
+      <div class="slide-header">
+        <div class="kicker">KIỂM CHỨNG THỰC CHỨNG & MINH BẠCH</div>
+        <h2 class="slide-title">19/19 Bài Pytest Đạt Tuyệt Đối & Trung Thực Khoa Học</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title green">19/19 Bài kiểm thử tự động (Pytest Pass)</div>
+            <ul>
+              <li><strong>Kiểm thử đo ngập:</strong> Đo chính xác 3 mức ngập qua bánh xe 50cm và kiểm tra thích ứng ban đêm với CLAHE.</li>
+              <li><strong>Kiểm thử ngã xe:</strong> Lọc bỏ người cúi nhặt đồ và xe dừng đèn đỏ &lt; 5s; kích hoạt đúng khi nằm im &ge; 5s.</li>
+              <li><strong>Kiểm thử API & Dữ liệu:</strong> Gói tin &lt; 150 Bytes, GeoJSON đổi màu, phân trang SQLite và sao lưu nóng an toàn.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">Liêm chính học thuật (Zero Fake Data)</div>
+            <ul>
+              <li><strong>Dữ liệu thực tế:</strong> Đo đạc trên tập video ngập lụt thực tế tại TP.HCM đối chiếu với bảng nhãn labels.csv.</li>
+              <li><strong>Dám nhận giới hạn:</strong> Ở video hẻm ngập sâu không có xe máy chạy qua làm mốc, hệ thống trung thực báo không đo được (0.0cm) thay vì ngụy tạo kết quả.</li>
+              <li><strong>Khả năng tái lập:</strong> Bất kỳ ai cũng có thể chạy lệnh pytest tests/ -v trực tiếp trên terminal để kiểm chứng.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 7 / 8</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide" data-notes="Với việc tận dụng camera và máy tính sẵn có ở địa phương, UrbanShield Lite có thể triển khai ngay ngày mai mà không cần chờ ngân sách đầu tư tốn kém. Nhóm em hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Thầy Cô và các bạn!">
+      <div class="slide-header">
+        <div class="kicker">KHẢ NĂNG ỨNG DỤNG & KẾT LUẬN</div>
+        <h2 class="slide-title">Sẵn Sàng Triển Khai Ngay Vì Sự An Toàn Ngõ Hẻm</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title blue">LỰC LƯỢNG CỨU HỘ</div>
+            <ul>
+              <li>Nhận tin Telegram sau 1.5 giây.</li>
+              <li>Nắm bắt vị trí ngập và tai nạn kịp thời.</li>
+              <li>Chủ động phân luồng xe máy từ xa.</li>
+              <li>Cứu giúp người gặp nạn giữa đêm mưa.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title green">BÀ CON LAO ĐỘNG</div>
+            <ul>
+              <li>Xem trực tiếp bản đồ WebGIS trên điện thoại.</li>
+              <li>Biết trước các con hẻm ngập sâu để tránh.</li>
+              <li>Giảm thiểu tình trạng xe chết máy dắt bộ.</li>
+              <li>An tâm khi đi làm về lúc triều cường.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">CHÍNH QUYỀN ĐỊA PHƯƠNG</div>
+            <ul>
+              <li>Triển khai ngay với chi phí thiết bị <strong>0 đồng</strong>.</li>
+              <li>Tận dụng máy tính & camera hiện có.</li>
+              <li>Không sợ rác nghẹt làm hỏng cảm biến.</li>
+              <li>Dễ dàng mở rộng ra toàn bộ các phường.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>UrbanShield Lite — Đội SingleNode</span>
+        <span>Slide 8 / 8</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Floating Nav Controls -->
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" title="Slide trước (◄)">◄</button>
+    <span class="page-indicator" id="pageIndicator">1 / 8</span>
+    <button class="nav-btn" id="nextBtn" title="Slide sau (►)">►</button>
+    <button class="nav-btn" id="notesBtn" title="Bật/Tắt Lời thoại thuyết trình (N)">🎙️</button>
+    <button class="nav-btn" id="fsBtn" title="Toàn màn hình (F)">⛶</button>
+  </div>
+
+  <!-- Speaker Notes Drawer -->
+  <div class="speaker-drawer" id="speakerDrawer">
+    <div class="header-tag">🎙️ LỜI THOẠI THUYẾT TRÌNH (SPEAKER NOTES - NHẤN 'N' ĐỂ ĐÓNG/MỞ)</div>
+    <div id="notesContent">...</div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('pageIndicator');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const notesBtn = document.getElementById('notesBtn');
+    const fsBtn = document.getElementById('fsBtn');
+    const drawer = document.getElementById('speakerDrawer');
+    const notesContent = document.getElementById('notesContent');
+
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === index);
+      });
+
+      currentSlide = index;
+      indicator.textContent = `${currentSlide + 1} / ${slides.length}`;
+      notesContent.textContent = slides[currentSlide].getAttribute('data-notes') || '';
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    function toggleNotes() {
+      drawer.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    notesBtn.addEventListener('click', toggleNotes);
+    fsBtn.addEventListener('click', toggleFullscreen);
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Touch swipe support for tablet/mobile
+    let touchStartX = 0;
+    window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    window.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].clientX - touchStartX;
+      if (diff < -50) nextSlide();
+      if (diff > 50) prevSlide();
+    });
+
+    // Init
+    showSlide(0);
+  </script>
+</body>
+</html>
