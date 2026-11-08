@@ -42,9 +42,14 @@ Hệ thống kiểm thử tự động bằng trình duyệt thật **Playwright
 
 ## ✅ 2. TỔNG HỢP KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (PYTEST + PLAYWRIGHT QA SUITE)
 
-- **Lệnh thực thi chuẩn:** `pytest tests/ -v`
+- **Lệnh thực thi chuẩn:** `.\backend\venv\Scripts\pytest.exe tests/ -v` (hoặc chạy file script `.\run_tests.ps1`)
 - **Tổng số bài kiểm thử (Test Cases):** **`24 / 24 PASS (100%)`**
 - **Thời gian thực thi:** `67.46 giây` trên CPU phổ thông.
+- **Tệp nhật ký đầy đủ:** [`docs/pytest_execution_log.txt`](pytest_execution_log.txt)
+
+### 🖥️ Ảnh chụp màn hình thực tế cửa sổ lệnh PowerShell (Terminal Execution Evidence):
+> Minh chứng thực tế từ môi trường máy tính người dùng chạy lệnh kiểm thử `pytest tests/ -v` hoàn tất 24/24 bài test với trạng thái toàn bộ xanh (PASSED):
+![Minh chứng thực thi lệnh Pytest 24/24 PASS](screenshots/pytest_terminal_evidence.png)
 
 ```text
 ============================= test session starts =============================

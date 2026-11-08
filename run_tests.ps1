@@ -3,3 +3,4 @@ Write-Host "  URBANSHIELD LITE - CHAY TOAN BO 24 BAI KIEM THU QA" -ForegroundCol
 Write-Host "========================================================" -ForegroundColor Cyan
 
 & ".\backend\venv\Scripts\pytest.exe" tests/ -v
+
