@@ -21,6 +21,6 @@ Dựa vào tài liệu kịch bản UrbanShield Lite đã tải lên, hãy đón
    - [Tiêu đề & Thông điệp cốt lõi]
    - [Gợi ý bố cục thị giác trên nền trắng] (Slide 3: Sơ đồ khối; Slide 4: Bố cục 4 thẻ công nghệ dạng lưới 2x2)
    - [Nội dung tóm tắt hiển thị trên slide] (súc tích; Slide 3 chỉ ghi nhãn sơ đồ khối, Slide 4 chỉ ghi danh mục tên công nghệ dạng thẻ)
-   - [Lời thoại người nói (Speaker Notes)]: Giữ nguyên 100% văn nói mộc mạc, tự nhiên trong tài liệu (xưng "em", gọi "Thầy Cô và các bạn").
+   - [Lời thoại người nói (Speaker Notes)]: Văn nói liên tục, tự nhiên, không lặp lại "dạ thưa" ở từng slide mà dùng các từ nối mạch lạc chuyển tiếp nội dung theo kịch bản.
 ```
 

@@ -75,7 +75,7 @@ graph LR
 ```
 
 * **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích chi tiết sơ đồ):**
-  > "Dạ thưa Thầy Cô và các bạn, trên slide là sơ đồ kiến trúc tổng thể của hệ thống, được thiết kế tách biệt 3 tầng rõ ràng. Đầu tiên, camera ở ngõ hẻm truyền video về máy tính khu phố. Tại đây, máy tính chạy 2 luồng độc lập: một luồng giữ hình ảnh 28.5 khung hình một giây cho cán bộ trực ban theo dõi mượt mà, luồng thứ hai đẩy vào hàng đợi AI bất đồng bộ để phân tích ngầm mà không làm đứng hình camera. Toàn bộ hình ảnh chỉ xử lý trên bộ nhớ RAM rồi tự hủy ngay lập tức, không lưu một video nào xuống ổ cứng để bảo vệ sự riêng tư của bà con. Và chỉ khi có sự cố, máy tính tại ngõ hẻm mới bắn một mẩu tin nhỏ 81 Bytes lên máy chủ đám mây và Telegram để dân quân xuất phát ứng cứu kịp thời ạ."
+  > "Để giải quyết bài toán đó, đây là sơ đồ kiến trúc tổng thể 3 tầng của hệ thống. Đầu tiên, camera ở ngõ hẻm truyền video về máy tính khu phố. Tại đây, máy tính chạy 2 luồng độc lập: một luồng giữ hình ảnh 28.5 khung hình một giây cho cán bộ trực ban theo dõi mượt mà, luồng thứ hai đẩy vào hàng đợi AI bất đồng bộ để phân tích ngầm mà không làm đứng hình camera. Toàn bộ hình ảnh chỉ xử lý trên bộ nhớ RAM rồi tự hủy ngay lập tức, không lưu một video nào xuống ổ cứng để bảo vệ sự riêng tư của bà con. Và chỉ khi có sự cố, máy tính tại ngõ hẻm mới bắn một mẩu tin nhỏ 81 Bytes lên máy chủ đám mây và Telegram để dân quân xuất phát ứng cứu kịp thời."
 
 ---
 
@@ -97,7 +97,7 @@ graph LR
 ```
 
 * **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích lý do lựa chọn kỹ thuật):**
-  > "Dạ thưa Thầy Cô và các bạn, trên slide là 4 trụ cột công nghệ mà nhóm đã chọn lọc kỹ lưỡng. Về AI, nhóm chủ động chọn mô hình YOLOv8-nano siêu gọn chỉ 3.2 triệu tham số để chạy trực tiếp trên CPU phổ thông mà vẫn đạt tốc độ xử lý nhanh dưới 50 mili-giây, kết hợp OpenCV để tìm mép nước và cân bằng sáng ban đêm. Phía backend, nhóm dùng Python FastAPI kết hợp SQLite chế độ WAL để ghi nhật ký nhanh mà không tốn công cài đặt các hệ quản trị nặng nề. Giao diện được xây dựng bằng React và bản đồ số Leaflet để hiển thị trực quan các tuyến đường ngõ hẻm theo chuẩn quốc tế GeoJSON. Cuối cùng, toàn bộ hệ thống được đóng gói trong một container Docker duy nhất triển khai trên Google Cloud Run với chi phí 0 đồng, đi kèm bộ kiểm thử tự động 24 bài test bảo đảm vận hành chuẩn xác ạ."
+  > "Về công nghệ phía sau kiến trúc này, nhóm chọn lọc 4 trụ cột chính. Về AI, nhóm chủ động chọn mô hình YOLOv8-nano siêu gọn chỉ 3.2 triệu tham số để chạy trực tiếp trên CPU phổ thông mà vẫn đạt tốc độ xử lý nhanh dưới 50 mili-giây, kết hợp OpenCV để tìm mép nước và cân bằng sáng ban đêm. Phía backend, hệ thống dùng Python FastAPI kết hợp SQLite chế độ WAL để ghi nhật ký nhanh mà không tốn công cài đặt các hệ quản trị nặng nề. Giao diện được xây dựng bằng React và bản đồ số Leaflet để hiển thị trực quan các tuyến đường ngõ hẻm theo chuẩn quốc tế GeoJSON. Cuối cùng, toàn bộ hệ thống được đóng gói trong một container Docker duy nhất triển khai trên Google Cloud Run với chi phí 0 đồng, đi kèm bộ kiểm thử tự động 24 bài test bảo đảm vận hành chuẩn xác."
 
 ---
 
@@ -138,7 +138,7 @@ graph LR
      * *Tự hủy báo giả:* Nếu người dân chỉ cúi xuống nhặt đồ hoặc dừng xe chống chân $< 5.0\text{ giây}$ rồi đứng dậy $\rightarrow$ Bộ đếm tự động hủy bỏ.
      * *Kích hoạt khẩn cấp:* Chỉ khi nạn nhân hoặc phương tiện nằm bất động liên tục $\ge 5.0\text{ giây}$ $\rightarrow$ Lập tức phát còi cảnh báo trực quan và gửi tin cứu hộ.
 * **Lời thoại người nói (Speaker Notes):**
-  > "Với tính năng cảnh báo tai nạn, rào cản lớn nhất là báo động nhầm khi người dân dừng xe chống chân hoặc cúi nhặt đồ. Nhóm em đã giải quyết triệt để bằng máy trạng thái đếm thời gian: hệ thống chỉ theo dõi trong im lặng, nếu người đó đứng dậy trước 5 giây thì tự động xóa cờ; chỉ khi nạn nhân nằm bất động quá 5 giây thì mới kích hoạt báo động khẩn cấp gửi về trạm dân phòng."
+  > "Song song với đo ngập là tính năng cảnh báo tai nạn. Rào cản lớn nhất ở đây là báo động nhầm khi người dân dừng xe chống chân hoặc cúi nhặt đồ. Nhóm giải quyết triệt để bằng máy trạng thái đếm thời gian: hệ thống chỉ theo dõi trong im lặng, nếu người đó đứng dậy trước 5 giây thì tự động xóa cờ; chỉ khi nạn nhân nằm bất động quá 5 giây thì mới kích hoạt báo động khẩn cấp gửi về trạm dân phòng."
 
 ---
 
@@ -167,4 +167,4 @@ graph LR
   * **Thực nghiệm trên video ngập thực tế TP.HCM:** Độ trễ suy luận CPU chỉ **103.9 ms**, nhận diện ngập sâu **30 - 43 cm**, không báo động giả khi đường khô ráo (**0.0 cm**).
   * **Triển khai Cloud đạt chuẩn tiêu chí VII:** Đã đóng gói và chạy thực tế trên **Google Cloud Run** tại địa chỉ: `https://urbanshield-sgu-128758538305.asia-southeast1.run.app/` (Singapore `asia-southeast1`, tự cấp chứng chỉ bảo mật HTTPS, chi phí 0 đồng).
 * **Lời kết thuyết trình:**
-  > "Toàn bộ các số liệu nhóm báo cáo đều được kiểm chứng minh bạch qua 24 bài kiểm thử tự động và chạy thực nghiệm trên các video ngập lụt thực tế tại Thành phố Hồ Chí Minh. Dự án đã được đóng gói hoàn chỉnh lên Google Cloud Run với chi phí 0 đồng. Nhóm em hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Quý Thầy Cô và các bạn!"
+  > "Toàn bộ các số liệu nhóm báo cáo đều được kiểm chứng minh bạch qua 24 bài kiểm thử tự động và chạy thực nghiệm trên các video ngập lụt thực tế tại Thành phố Hồ Chí Minh. Dự án đã được đóng gói hoàn chỉnh lên Google Cloud Run với chi phí 0 đồng. Nhóm hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Thầy Cô và các bạn đã lắng nghe!"
