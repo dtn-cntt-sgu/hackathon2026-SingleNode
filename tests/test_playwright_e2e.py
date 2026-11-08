@@ -123,3 +123,4 @@ def test_e2e_webgis_map_component(browser_context):
     map_elem.screenshot(path=screenshot_path)
     assert os.path.exists(screenshot_path)
     page.close()
+
