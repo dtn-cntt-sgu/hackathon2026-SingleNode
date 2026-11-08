@@ -35,7 +35,7 @@ export default function ReportModal({
         <div className="report-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <FileText size={18} style={{ color: '#0284c7' }} />
-            <h3>BÁO CÁO VĂN BẢN MỘC MẠC (TEXT REPORT) & GÓI TIN &lt; 150 BYTES</h3>
+            <h3>BÁO CÁO VĂN BẢN SỰ CỐ &amp; GÓI TIN TỐI THIỂU (&lt; 150 BYTES)</h3>
           </div>
           <button className="modal-close-btn" onClick={onClose}>
             <X size={18} />
@@ -62,7 +62,7 @@ export default function ReportModal({
 
           <div className="payload-proof-card">
             <div className="payload-proof-header">
-              <span>MINIMAL API JSON PAYLOAD (CHỈ GỬI MẨU TIN KHI CÓ SỰ CỐ):</span>
+              <span>GÓI TIN DỮ LIỆU TỐI THIỂU (MINIMAL JSON PAYLOAD):</span>
               <span className="byte-pill">
                 {proofByteSize} Bytes / 150 Bytes (Tiết kiệm 99.98% băng thông)
               </span>
