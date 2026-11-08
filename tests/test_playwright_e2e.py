@@ -7,6 +7,8 @@ interactive Leaflet WebGIS, and shift report modal with live screenshot capture.
 import os
 import time
 import pytest
+
+playwright = pytest.importorskip("playwright", reason="Playwright is required for browser E2E tests")
 from playwright.sync_api import sync_playwright, expect
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")

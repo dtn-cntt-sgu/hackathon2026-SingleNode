@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Automated QA Test Suite (Pytest)
         run: |
-          pytest tests/ -v
+          pytest tests/ --ignore=tests/test_playwright_e2e.py -v
 
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
