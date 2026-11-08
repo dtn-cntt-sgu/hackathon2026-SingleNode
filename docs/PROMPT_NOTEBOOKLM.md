@@ -1,6 +1,6 @@
-# ⚡ PROMPT NGẮN GỌN TẠO SLIDE NOTEBOOKLM: KIẾN TRÚC, CÔNG NGHỆ & LUỒNG
+# ⚡ PROMPT DUY NHẤT DÀNH CHO NOTEBOOKLM TẠO SLIDE NỀN TRẮNG
 
-> **Cách dùng:** Tải file `docs/KICH_BAN_SLIDE_NOTEBOOKLM.md` lên làm nguồn tài liệu trong [NotebookLM](https://notebooklm.google.com/), sau đó copy đoạn prompt ngắn gọn bên dưới dán vào ô chat:
+> **Cách dùng:** Tải file [`docs/KICH_BAN_SLIDE_NOTEBOOKLM.md`](KICH_BAN_SLIDE_NOTEBOOKLM.md) lên làm nguồn tài liệu trong [NotebookLM](https://notebooklm.google.com/), sau đó sao chép đoạn prompt ngắn gọn bên dưới dán vào ô chat:
 
 ---
 
