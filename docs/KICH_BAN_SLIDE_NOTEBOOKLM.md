@@ -16,8 +16,8 @@
 * **Bố cục thị giác (Nền trắng tối giản):**
   * Logo chiếc khiên bảo vệ khu phố màu xanh navy `#0F172A`.
   * Ảnh chụp thực tế giao diện WebGIS đang chạy trực tiếp: Camera AI nhận diện mốc bánh xe 50cm, vạch ngấn nước màu đỏ và bản đồ số đổi màu thời gian thực.
-* **Lời thoại người nói (Speaker Notes):**
-  > "Chào Thầy Cô và các bạn, em là Phát đến từ đội SingleNode. Hôm nay nhóm em xin trình bày về dự án UrbanShield Lite — giải pháp ứng dụng trí tuệ nhân tạo tại chỗ trên các máy tính CPU phổ thông có sẵn tại khu phố, nhằm phát hiện ngập nước và tai nạn giao thông tại những con đường nhỏ và ngõ hẻm hay bị ngập sâu ở Thành phố Hồ Chí Minh."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực diện với Ban Giám khảo):**
+  > "Ở TP.HCM, mỗi mùa mưa hay triều cường, những con đường nhỏ và ngõ hẻm luôn là nơi ngập sâu nhất, người dân dắt xe chết máy và ngã xe nhiều nhất. Nhưng hiện tại các hệ thống cảnh báo hầu như chỉ phủ được ở trục đường lớn, còn ngõ hẻm bị bỏ quên vì thiết bị quá đắt và không thể kéo video liên tục về trung tâm. UrbanShield Lite ra đời để giải quyết đúng bài toán đó: biến camera có sẵn và máy tính cũ ở khu phố thành trạm quan trắc ngập và cứu hộ tai nạn tại chỗ."
 
 ---
 
@@ -32,8 +32,8 @@
   * **Rào cản 3 - Quyền riêng tư:** Người dân lo ngại hình ảnh sinh hoạt riêng tư trong ngõ hẻm bị lưu trữ tùy tiện lên máy chủ bên ngoài.
 * **Bố cục thị giác:**
   * Chia 3 cột thẻ trắng viền xám mảnh: Cột 1 (Nghẽn mạng 450 MB/h) – Cột 2 (Phần cứng GPU đắt đỏ) – Cột 3 (Nguy cơ lộ video riêng tư).
-* **Lời thoại người nói (Speaker Notes):**
-  > "Thực tế là mỗi khi mùa mưa đến, những con đường nhỏ và ngõ hẻm hay bị ngập sâu khiến bà con bị chết máy hoặc ngã xe rất nguy hiểm. Nhưng nếu mua camera chuyên dụng thì quá đắt đỏ, còn dùng camera thường kéo video liên tục về máy chủ thì lại làm nghẽn toàn bộ đường truyền mạng. Do đó, nhóm em đặt ra bài toán: phải đưa toàn bộ khâu phân tích AI về chạy tại chỗ trên máy tính văn phòng bình thường, và chỉ gửi đi một mẩu tin văn bản ngắn khi có sự cố."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực diện):**
+  > "Cái khó lớn nhất khi đưa công nghệ về ngõ hẻm là hạ tầng: mua camera chuyên dụng thì ngân sách địa phương không kham nổi, còn dùng camera thường kéo video về máy chủ thì mưa bão chắc chắn nghẽn mạng. Chưa kể bà con rất e ngại việc camera công cộng theo dõi và lưu video sinh hoạt đời tư. Vì vậy, bài toán nhóm em tự đặt ra là: toàn bộ AI phải chạy trực tiếp trên CPU của máy tính văn phòng cũ, video chỉ đọc trên RAM rồi tự hủy ngay, và khi có sự cố thì chỉ gửi đi một mẩu tin văn bản nhỏ đúng 81 Bytes."
 
 ---
 
@@ -74,8 +74,8 @@ graph LR
     style T3 fill:#F0FDF4,stroke:#16A34A,stroke-width:2px
 ```
 
-* **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích chi tiết sơ đồ):**
-  > "Để giải quyết bài toán đó, đây là sơ đồ kiến trúc tổng thể 3 tầng của hệ thống. Đầu tiên, camera ở ngõ hẻm truyền video về máy tính khu phố. Tại đây, máy tính chạy 2 luồng độc lập: một luồng giữ hình ảnh 28.5 khung hình một giây cho cán bộ trực ban theo dõi mượt mà, luồng thứ hai đẩy vào hàng đợi AI bất đồng bộ để phân tích ngầm mà không làm đứng hình camera. Toàn bộ hình ảnh chỉ xử lý trên bộ nhớ RAM rồi tự hủy ngay lập tức, không lưu một video nào xuống ổ cứng để bảo vệ sự riêng tư của bà con. Và chỉ khi có sự cố, máy tính tại ngõ hẻm mới bắn một mẩu tin nhỏ 81 Bytes lên máy chủ đám mây và Telegram để dân quân xuất phát ứng cứu kịp thời."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực tiếp theo sơ đồ):**
+  > "Nhìn vào sơ đồ kiến trúc, hệ thống chạy 3 tầng rất gọn: camera ngõ hẻm đẩy video nội bộ về máy tính khu phố. Tại đây, luồng hiển thị 28.5 khung hình một giây cho cán bộ trực ban được tách riêng hoàn toàn với hàng đợi AI chạy ngầm, nên máy tính không bao giờ bị giật lag hay đứng hình. Khung hình xử lý xong trên RAM là xóa ngay lập tức, bảo vệ tuyệt đối đời tư người dân. Và chỉ khi có ngập hay tai nạn, máy tính mới gửi một gói tin 81 Bytes lên Cloud và Telegram để điều động dân quân ra hiện trường."
 
 ---
 
@@ -96,8 +96,8 @@ graph LR
 └─────────────────────────────────────────┘  └─────────────────────────────────────────┘
 ```
 
-* **Lời thoại người nói (Speaker Notes - Người thuyết trình trực tiếp giải thích lý do lựa chọn kỹ thuật):**
-  > "Về công nghệ phía sau kiến trúc này, nhóm chọn lọc 4 trụ cột chính. Về AI, nhóm chủ động chọn mô hình YOLOv8-nano siêu gọn chỉ 3.2 triệu tham số để chạy trực tiếp trên CPU phổ thông mà vẫn đạt tốc độ xử lý nhanh dưới 50 mili-giây, kết hợp OpenCV để tìm mép nước và cân bằng sáng ban đêm. Phía backend, hệ thống dùng Python FastAPI kết hợp SQLite chế độ WAL để ghi nhật ký nhanh mà không tốn công cài đặt các hệ quản trị nặng nề. Giao diện được xây dựng bằng React và bản đồ số Leaflet để hiển thị trực quan các tuyến đường ngõ hẻm theo chuẩn quốc tế GeoJSON. Cuối cùng, toàn bộ hệ thống được đóng gói trong một container Docker duy nhất triển khai trên Google Cloud Run với chi phí 0 đồng, đi kèm bộ kiểm thử tự động 24 bài test bảo đảm vận hành chuẩn xác."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực tiếp lý do lựa chọn):**
+  > "Về công nghệ, nhóm tối ưu cho phần cứng phổ thông: mô hình YOLOv8-nano nhỏ nhất 3.2 triệu tham số chạy trực tiếp trên CPU chỉ tốn 32 mili-giây, kết hợp OpenCV để tìm mép nước và bù sáng ban đêm. Phía backend dùng FastAPI và SQLite chế độ WAL để ghi nhật ký nhanh mà không cần cài đặt cồng kềnh. Giao diện dùng React và bản đồ số Leaflet theo định dạng chuẩn quốc tế GeoJSON. Toàn bộ đóng gói trong một container Docker duy nhất triển khai trên Google Cloud Run với chi phí 0 đồng, đi kèm 24 bài test tự động bảo đảm chạy đúng chuẩn."
 
 ---
 
@@ -119,8 +119,8 @@ graph LR
        $$\text{Độ ngập (cm)} = 50\text{ cm} \times \left(1 - \frac{\text{Chiều cao lốp còn nổi}}{\text{Toàn bộ chiều cao lốp}}\right)$$
      * Làm mịn biến động bằng hàm làm mịn mũ EMA ($0.7 \text{ EMA cũ} + 0.3 \text{ đo mới}$).
      * Duy trì bộ đệm giữ mẫu (Sample & Hold) 6.0 giây để chống chớp nháy khi xe vừa chạy qua.
-* **Lời thoại người nói (Speaker Notes):**
-  > "Đây là luồng thuật toán đo ngập nước. Thay vì bắt khu phố phải đóng cọc gắn thước đo dễ bị rác quấn trôi, hệ thống tận dụng chính những chiếc xe máy chạy qua đường làm thước đo di động 50cm. Máy tính tự nhận diện bánh xe, dùng đạo hàm Sobel tìm đường ngấn nước cắt ngang lốp xe, rồi nhân theo tỷ lệ hình học để tính ra độ sâu ngập chính xác từng centimet."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực tiếp):**
+  > "Về đo ngập, thay vì cắm cọc đo dễ bị rác cuốn trôi, hệ thống lấy chính bánh xe máy đang chạy qua đường làm thước đo chuẩn 50cm. Khi phát hiện mặt đường có gợn sóng, máy tính nhận diện chân bánh xe của xe máy đi gần nhất, dùng đạo hàm Sobel quét tìm ngấn nước cắt ngang lốp rồi quy đổi tỷ lệ hình học ra số centimet ngập thực tế. Kèm theo bộ lọc làm mịn để số đo không bị nhảy giật khi xe vừa chạy qua."
 
 ---
 
@@ -137,8 +137,8 @@ graph LR
   4. **Bước 4 - Tự hủy báo nhầm & Kích hoạt khẩn cấp:**
      * *Tự hủy báo giả:* Nếu người dân chỉ cúi xuống nhặt đồ hoặc dừng xe chống chân $< 5.0\text{ giây}$ rồi đứng dậy $\rightarrow$ Bộ đếm tự động hủy bỏ.
      * *Kích hoạt khẩn cấp:* Chỉ khi nạn nhân hoặc phương tiện nằm bất động liên tục $\ge 5.0\text{ giây}$ $\rightarrow$ Lập tức phát còi cảnh báo trực quan và gửi tin cứu hộ.
-* **Lời thoại người nói (Speaker Notes):**
-  > "Song song với đo ngập là tính năng cảnh báo tai nạn. Rào cản lớn nhất ở đây là báo động nhầm khi người dân dừng xe chống chân hoặc cúi nhặt đồ. Nhóm giải quyết triệt để bằng máy trạng thái đếm thời gian: hệ thống chỉ theo dõi trong im lặng, nếu người đó đứng dậy trước 5 giây thì tự động xóa cờ; chỉ khi nạn nhân nằm bất động quá 5 giây thì mới kích hoạt báo động khẩn cấp gửi về trạm dân phòng."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực tiếp):**
+  > "Về tai nạn, bài toán đau đầu nhất là báo nhầm khi người dân cúi nhặt đồ hoặc dừng xe chống chân. Hệ thống giải quyết bằng máy trạng thái 5 giây: khi thấy dáng người đổ ngang, máy tính chỉ âm thầm bấm giờ. Nếu người đó tự đứng dậy trước 5 giây, cờ sự cố tự động hủy; chỉ khi người nằm bất động liên tục quá 5 giây thì còi báo động và tin nhắn khẩn cấp mới lập tức gửi về đội dân quân."
 
 ---
 
@@ -155,8 +155,8 @@ graph LR
     * Khung hình video từ camera chỉ giải mã tạm thời vào mảng NumPy trên bộ nhớ RAM.
     * Ngay sau khi suy luận AI xong, hàm tự động gọi `del frame` và kích hoạt bộ thu gom rác bộ nhớ.
     * **Cam kết Zero-Disk write: 0 byte hình ảnh/video người dân bị ghi xuống ổ đĩa cứng.**
-* **Lời thoại người nói (Speaker Notes):**
-  > "Điểm đột phá về mặt mạng là thay vì kéo luồng video nặng hàng trăm megabyte làm nghẽn đường truyền, máy tính tại ngõ hẻm chỉ gửi đi một mẩu tin cảnh báo nhỏ đúng 81 Bytes qua mạng di động. Đồng thời, toàn bộ hình ảnh chỉ xử lý tạm trên thanh RAM rồi tự hủy ngay lập tức, không lưu bất kỳ video nào của người dân vào ổ đĩa, bảo đảm tuyệt đối quyền riêng tư."
+* **Lời thoại người nói (Speaker Notes - Trao đổi 1-1 trực tiếp):**
+  > "Về đường truyền và bảo mật, thay vì ngốn 450 Megabyte mỗi giờ để kéo video làm nghẽn mạng ngõ hẻm, cả hệ thống chỉ truyền đúng một gói tin JSON 81 Bytes khi có sự cố. Toàn bộ hình ảnh chỉ nằm tạm trên mảng nhớ RAM của máy tính biên rồi tự giải phóng, cam kết 0 byte hình ảnh người dân bị ghi xuống ổ cứng."
 
 ---
 
@@ -166,5 +166,5 @@ graph LR
   * **Bộ kiểm thử tự động 100%:** Toàn bộ **`24 / 24 bài test (Pytest & Playwright E2E)`** đều đạt PASSED, có ảnh chụp màn hình terminal thực tế lưu trong hồ sơ nghiệm thu.
   * **Thực nghiệm trên video ngập thực tế TP.HCM:** Độ trễ suy luận CPU chỉ **103.9 ms**, nhận diện ngập sâu **30 - 43 cm**, không báo động giả khi đường khô ráo (**0.0 cm**).
   * **Triển khai Cloud đạt chuẩn tiêu chí VII:** Đã đóng gói và chạy thực tế trên **Google Cloud Run** tại địa chỉ: `https://urbanshield-sgu-128758538305.asia-southeast1.run.app/` (Singapore `asia-southeast1`, tự cấp chứng chỉ bảo mật HTTPS, chi phí 0 đồng).
-* **Lời kết thuyết trình:**
-  > "Toàn bộ các số liệu nhóm báo cáo đều được kiểm chứng minh bạch qua 24 bài kiểm thử tự động và chạy thực nghiệm trên các video ngập lụt thực tế tại Thành phố Hồ Chí Minh. Dự án đã được đóng gói hoàn chỉnh lên Google Cloud Run với chi phí 0 đồng. Nhóm hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Thầy Cô và các bạn đã lắng nghe!"
+* **Lời kết thuyết trình (Trao đổi 1-1 trực tiếp):**
+  > "Toàn bộ giải pháp này đã vượt qua 100% bộ 24 bài kiểm thử tự động, chạy thực nghiệm chuẩn xác trên các video ngập lụt thực tế ở TP.HCM với độ trễ CPU chỉ 103 mili-giây, và hiện đang chạy thực tế trên Google Cloud Run tại Singapore với chi phí 0 đồng. Mục tiêu lớn nhất của nhóm em là tạo ra một giải pháp thiết thực, tiết kiệm và tôn trọng quyền riêng tư để giúp bà con lao động an tâm đi về trong những đêm mưa gió."
