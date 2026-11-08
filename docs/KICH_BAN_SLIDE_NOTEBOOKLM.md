@@ -141,4 +141,3 @@
   * **Khả năng nhân rộng:** Triển khai được ngay tại hàng ngàn ngõ hẻm trên địa bàn thành phố với chi phí mua sắm thiết bị mới là **0 đồng**.
 * **Lời kết thuyết trình:**
   > "Với việc tận dụng camera và máy tính sẵn có ở địa phương, UrbanShield Lite có thể triển khai ngay ngày mai mà không cần chờ ngân sách đầu tư tốn kém. Nhóm em hy vọng giải pháp nhỏ bé này sẽ giúp bà con lao động đi làm về không còn cảnh dắt xe chết máy trong đêm mưa, và người gặp nạn trong hẻm vắng luôn được phát hiện và giúp đỡ kịp thời. Em xin chân thành cảm ơn Thầy Cô và các bạn!"
-
