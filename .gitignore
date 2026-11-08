@@ -35,6 +35,7 @@ flood_accident_1.mp4
 # OS & Editor
 .DS_Store
 Thumbs.db
+~$*
 *.swp
 *.bak
 .idea/

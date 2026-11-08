@@ -257,6 +257,7 @@ class UrbanShieldDetector:
         self.node_ema_depth: Dict[str, float] = {}
         self.node_last_depth: Dict[str, float] = {}
         self.node_last_time: Dict[str, float] = {}
+        self.node_last_ref: Dict[str, Any] = {}
 
         # State tracking for fallen candidates (backward-compat fallback)
         self.fallen_candidates: Dict[int, Dict[str, Any]] = {}
@@ -277,6 +278,12 @@ class UrbanShieldDetector:
         self.ema_flood_depth_cm = 0.0
         self.last_measured_depth_cm = 0.0
         self.last_measured_time = 0.0
+        self.node_ema_depth.clear()
+        self.node_last_depth.clear()
+        self.node_last_time.clear()
+        self.node_last_ref.clear()
+        self.node_fallen_candidates.clear()
+        self.node_next_cand_id.clear()
         self.fallen_candidates.clear()
 
     def preprocess_clahe(self, frame: np.ndarray) -> Tuple[np.ndarray, bool]:
@@ -338,6 +345,7 @@ class UrbanShieldDetector:
             self.node_ema_depth[node_id] = 0.0
             self.node_last_depth[node_id] = 0.0
             self.node_last_time[node_id] = 0.0
+            self.node_last_ref[node_id] = None
         fallen_candidates = self.node_fallen_candidates[node_id]
 
         # 0. CLAHE Night/Rain Preprocessing
@@ -409,12 +417,12 @@ class UrbanShieldDetector:
         is_water_surface = (not is_dry_road) and (val_mean > 15.0)
 
         # Filter upright motorcycles/bicycles in the measurable road corridor (width >= 20, height >= 26)
-        # Upright running motorcycles with riders/raincoats have aspect ratio <= 1.20; fallen bikes (AR >= 1.25) are NEVER flood references!
+        # Upright running motorcycles with riders/raincoats have aspect ratio <= 1.35; fallen bikes (AR >= 1.65) are NEVER flood references!
         valid_motorcycles = [
             m for m in motorcycles
             if m["width"] >= 20 and m["height"] >= 26
-            and m["aspect_ratio"] <= 1.20
-            and (0.12 * w <= m["center"][0] <= 0.90 * w)
+            and m["aspect_ratio"] <= 1.35
+            and (0.05 * w <= m["center"][0] <= 0.95 * w)
         ]
         valid_motorcycles.sort(key=lambda x: x["box"][3], reverse=True)
 
@@ -441,9 +449,9 @@ class UrbanShieldDetector:
             valid_veh = [
                 v for v in vehicles
                 if v["class"] in ("car",)
-                and v["width"] >= 40 and v["height"] >= 35
-                and (0.15 * w <= v["center"][0] <= 0.85 * w)
-                and (v["center"][1] >= 0.50 * h)
+                and v["width"] >= 35 and v["height"] >= 30
+                and (0.08 * w <= v["center"][0] <= 0.92 * w)
+                and (v["center"][1] >= 0.32 * h)
             ]
             if valid_veh:
                 valid_veh.sort(key=lambda x: x["box"][3], reverse=True)
@@ -518,10 +526,20 @@ class UrbanShieldDetector:
             self.node_last_time[node_id] = curr_time
             self.ema_flood_depth_cm = final_depth_cm
             self.last_measured_depth_cm = final_depth_cm
+            self.last_measured_time = curr_time
         else:
-            # STRICT TECHNICAL HONESTY: When 0 objects are in the frame, live depth_cm is 0.0!
-            # We do NOT claim a live wheel depth measurement when no vehicle/object is present.
-            final_depth_cm = 0.0
+            # Temporal Sample & Hold: When water surface is actively detected,
+            # hold the last valid flood measurement for up to 6.0 seconds so single-frame
+            # occlusions or tracking gaps do NOT cause the UI to flicker to 0cm (Khô ráo)!
+            last_depth = self.node_last_depth.get(node_id, self.last_measured_depth_cm)
+            last_t = self.node_last_time.get(node_id, self.last_measured_time)
+            if is_water_surface and last_depth >= 10.0 and (curr_time - last_t <= 6.0):
+                final_depth_cm = last_depth
+                has_reference = True
+                self.ema_flood_depth_cm = final_depth_cm
+            else:
+                final_depth_cm = 0.0
+                has_reference = False
 
         flood_detected = has_reference and (final_depth_cm >= 10.0)
 
@@ -546,6 +564,23 @@ class UrbanShieldDetector:
             w_bot = py2
             w_left = px1 + int(pbw * 0.12)
             w_right = px2 - int(pbw * 0.12)
+            diam_cm = 50.0 if primary_ref["class"] in ("motorcycle", "bicycle") else 58.0
+            submerged_ratio = np.clip(final_depth_cm / max(1.0, diam_cm), 0.0, 0.95)
+            waterline_y = int(py2 - (wh * submerged_ratio))
+
+            primary_ref_info = {
+                "box": [px1, py1, px2, py2],
+                "waterline_y": waterline_y,
+                "wheel_top_y": w_top,
+                "depth_cm": final_depth_cm,
+                "class": primary_ref.get("class", "motorcycle")
+            }
+            self.node_last_ref[node_id] = primary_ref_info
+        elif has_reference and is_water_surface and self.node_last_ref.get(node_id) is not None:
+            # Re-use last benchmark overlay during brief temporal occlusion
+            last_ref = self.node_last_ref[node_id].copy()
+            last_ref["depth_cm"] = final_depth_cm
+            primary_ref_info = last_ref
 
             submerged_ratio = min(1.0, max(0.0, final_depth_cm / 50.0)) if flood_detected else 0.0
             waterline_y = int(w_bot - (submerged_ratio * wh))
