@@ -565,8 +565,8 @@ File gồm 71 dòng lệnh, đóng vai trò cầu nối thông tin giữa Edge A
 ```python
 def send_telegram_alert(text_report: str, incident_id: str = "") -> Dict[str, Any]:
     start_ts = time.time()
-    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip() or "9000579387:AAET2Fbjy1d2zUh9fHL6MGN7YKK4syqz5WI"
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or "5768661719"
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
     if bot_token and chat_id:
         try:

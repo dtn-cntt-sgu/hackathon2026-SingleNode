@@ -7,3 +7,4 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location fron
 
 Write-Host "`n[V] Da khoi dong Backend tai:  http://127.0.0.1:8000" -ForegroundColor Green
 Write-Host "[V] Da khoi dong Frontend tai: http://localhost:5173`n" -ForegroundColor Green
+
